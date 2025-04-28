@@ -33,7 +33,6 @@ Route::prefix('donor')->group(function () {
 });
 
 
-
 Route::prefix('workshop')->group(function () {
 
     Route::post('/register', [WorkshopController::class, 'register']);
