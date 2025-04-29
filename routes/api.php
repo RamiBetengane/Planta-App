@@ -8,7 +8,7 @@ Route::prefix('owner')->group(function () {
     Route::post('/register', [OwnerController::class, 'register']);
     Route::post('/login', [OwnerController::class, 'login']);
 
-    Route::middleware(['auth:sanctum', 'role:owner'])->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/logout', [OwnerController::class, 'logout']);
         Route::get('/profile', [OwnerController::class, 'profile']);
         Route::put('/updateInfo', [OwnerController::class, 'updatePersonalInfo']);

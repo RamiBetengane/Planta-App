@@ -108,9 +108,18 @@ class WorkshopController extends Controller
         $user = Auth::user();
 
         // جلب بيانات الورشة باستخدام العلاقة مع جدول workshops
-        $workshop = $user->workshop; // assuming the relationship is defined in the User model
-
-        return $this->getData('Getting workshop profile successfully', 'Workshop', $workshop);
+        // assuming the relationship is defined in the User model
+        $data = response()->json([
+            'username' => $user->username,
+            'email' => $user->email,
+            'phone_number' => $user->phone_number,
+            'address' => $user->address,
+            'registration_date' => $user->registration_date,
+            'user_type' => $user->user_type,
+            'image' => $user->image,
+            'Detail' => $user->workshop
+        ]);
+        return $this->getData('Getting workshop profile successfully', 'Workshop', $data);
     }
 
     /**

@@ -143,6 +143,7 @@ class OwnerController extends Controller
             'address' => $user->address,
             'registration_date' => $user->registration_date,
             'user_type' => $user->user_type,
+           'image' => $user->image,
 
         ]);
         return $this->getData('Getting profile successfully','Owner',$data);
