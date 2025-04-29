@@ -7,6 +7,8 @@ use App\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
 use App\Models\Owner;
@@ -14,7 +16,7 @@ use App\Models\Owner;
 class OwnerController extends Controller
 {
     use ResponseTrait;
-
+/*
     public function register(Request $request)
     {
         $request->validate([
@@ -52,6 +54,44 @@ class OwnerController extends Controller
 //        ], 201);
         return $this->getData('Owner registered successfully','Owner',$user);
     }
+
+*/
+
+    public function register(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string|max:50|unique:users,username',
+            'email' => 'required|string|email|max:100|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+            'phone_number' => 'required|string|max:20',
+            'address' => 'nullable|string',
+            'image'=>'required|image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048',
+        ]);
+
+        $image= str::random(32) . "." . $request->image->getClientOriginalExtension();
+
+
+        $user = User::create([
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'phone_number' => $request->phone_number,
+            'address' => $request->address,
+            'registration_date' => now(),
+            'image' => $image,
+            'user_type' => 'land_owner',
+        ]);
+
+        Owner::create([
+            'user_id' => $user->id,
+        ]);
+
+        $token = $user->createToken('owner-token')->plainTextToken;
+        Storage::disk('public')->put($image,file_get_contents($request->image));
+
+        return $this->getData('Owner registered successfully', 'Owner', $user);
+    }
+
 
     public function login(Request $request)
     {

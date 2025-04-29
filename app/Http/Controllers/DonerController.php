@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\ResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -26,7 +28,10 @@ class DonerController extends Controller
             'password' => 'required|string|min:6|confirmed',
             'phone_number' => 'required|string|max:20',
             'address' => 'nullable|string',
+            'image'=>'required|image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048',
+
         ]);
+        $image= str::random(32) . "." . $request->image->getClientOriginalExtension();
 
         // إنشاء مستخدم جديد (متبرع)
         $user = User::create([
@@ -36,7 +41,9 @@ class DonerController extends Controller
             'phone_number' => $request->phone_number,
             'address' => $request->address,
             'registration_date' => now(),
+            'image' => $image,
             'user_type' => 'donor',
+
         ]);
 
         // إنشاء سجل خاص بالمتبرع
@@ -47,6 +54,7 @@ class DonerController extends Controller
 
         // إنشاء توكن
         $token = $user->createToken('donor-token')->plainTextToken;
+        Storage::disk('public')->put($image,file_get_contents($request->image));
 
         return $this->getData('Donor registered successfully', 'Donor', $user);
     }

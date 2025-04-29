@@ -7,6 +7,8 @@ use App\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
 use App\Models\Workshop;
@@ -28,7 +30,10 @@ class WorkshopController extends Controller
             'years_of_experience' => 'required|nullable|integer', // تحقق من عدد سنوات الخبرة (يمكن أن يكون فارغًا)
             'rating' => 'required|nullable|numeric|between:0,5',    // تحقق من التقييم (بين 0 و 5)
             'specialization' => 'required|nullable|string|max:100', // تحقق من التخصص (يمكن أن يكون فارغًا)
+            'image'=>'required|image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048',
         ]);
+        $image= str::random(32) . "." . $request->image->getClientOriginalExtension();
+
 
 
         // إنشاء مستخدم جديد
@@ -39,6 +44,7 @@ class WorkshopController extends Controller
             'phone_number' => $request->phone_number,
             'address' => $request->address,
             'registration_date' => now(),
+            'image' => $image,
             'user_type' => 'workshop',
         ]);
 
@@ -54,6 +60,7 @@ class WorkshopController extends Controller
 
         // إنشاء توكن
         $token = $user->createToken('workshop-token')->plainTextToken;
+        Storage::disk('public')->put($image,file_get_contents($request->image));
 
         return $this->getData('Workshop registered successfully', 'Workshop', $user);
     }

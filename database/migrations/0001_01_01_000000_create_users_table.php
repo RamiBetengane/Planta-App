@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('phone_number', 20);
             $table->text('address')->nullable();
             $table->dateTime('registration_date');
+            $table->text('image');
             $table->enum('user_type', ['land_owner', 'manager', 'workshop', 'donor']);
             $table->timestamps(); // اختياري (يضيف created_at و updated_at)
         });

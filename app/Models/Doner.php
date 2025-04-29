@@ -10,6 +10,7 @@ class Doner extends Model
         'user_id',
         'tax_id',
         'donor_type',
+
     ];
 
     // العلاقة مع User
