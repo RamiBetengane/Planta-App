@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Plant;
 use App\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -149,4 +150,6 @@ class WorkshopController extends Controller
 
         return $this->getData('Workshop personal information updated successfully', 'Workshop', $workshop);
     }
+
+
 }

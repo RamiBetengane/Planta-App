@@ -11,8 +11,10 @@ Route::prefix('owner')->group(function () {
 
     Route::middleware(['auth:sanctum','role:land_owner'])->group(function () {
         Route::post('/logout', [OwnerController::class, 'logout']);
-        Route::get('/profile', [OwnerController::class, 'profile']);
-        Route::put('/updateInfo', [OwnerController::class, 'updatePersonalInfo']);
+        Route::get('/profile', [OwnerController::class, 'getProfile']);
+
+        Route::post('/addInfo', [OwnerController::class, 'completeProfile']);
+
     });
 });
 

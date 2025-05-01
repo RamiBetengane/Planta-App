@@ -69,5 +69,9 @@ class User extends Authenticatable
         return $this->hasOne(Workshop::class);
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class); // علاقة من نوع hasMany مع جدول notifications
+    }
 
 }

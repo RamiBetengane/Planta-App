@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('owners', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade')->unique();
-            $table->integer('id_number')->nullable();
-            $table->integer('estate_number')->nullable();
+            $table->string('title');
+            $table->text('message');
+            $table->boolean('read_status')->default(false); // الحقل الذي يشير إلى حالة القراءة
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // الربط مع جدول users
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('owners');
+        Schema::dropIfExists('notifications');
     }
 };

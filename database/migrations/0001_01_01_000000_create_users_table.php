@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('username', 50)->unique();
             $table->string('password');
             $table->string('email', 100)->unique();
-            $table->string('phone_number', 20);
+            $table->string('phone_number', 20)->nullable();
             $table->text('address')->nullable();
             $table->dateTime('registration_date');
-            $table->text('image');
+            $table->text('image')->nullable();
             $table->enum('user_type', ['land_owner', 'manager', 'workshop', 'donor']);
             $table->timestamps(); // اختياري (يضيف created_at و updated_at)
         });
