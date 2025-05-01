@@ -116,10 +116,11 @@ class OwnerController extends Controller
 
         $user->load('owner');
 
-        return response()->json([
-            'message' => 'Profile updated successfully',
-            'user' => $user
-        ]);
+//        return response()->json([
+//            'message' => 'Profile updated successfully',
+//            'user' => $user
+//        ]);
+        return $this->getData('Profile updated successfully','user',$user);
     }
 
     public function getProfile(Request $request)
@@ -129,10 +130,11 @@ class OwnerController extends Controller
         // تحميل العلاقة مع owner
         $user->load('owner');
 
-        return response()->json([
-            'message' => 'Profile retrieved successfully',
-            'user' => $user
-        ]);
+//        return response()->json([
+//            'message' => 'Profile retrieved successfully',
+//            'user' => $user
+//        ]);
+        return $this->getData('Profile retrieved successfully','user',$user);
     }
 
 
