@@ -48,7 +48,7 @@ class OwnerController extends Controller
     $token = $user->createToken('owner-token')->plainTextToken;
     Storage::disk('public')->put($image,file_get_contents($request->image));
 
-    return $this->getData('Owner registered successfully', 'Owner', $user);
+    return $this->getData('Owner registered successfully', 'User', $user);
 }
 
 
