@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Land;
 use App\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -157,5 +158,58 @@ class OwnerController extends Controller
     }
 
 
+    public function addLand(Request $request)
+    {
+        $validated = $request->validate([
+            'location_name' => 'required|string|max:255',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'total_area' => 'required|numeric',
+            'land_type' => 'required|in:private,government,unused',
+            'soil_type' => 'required|string',
+            'status' => 'required|in:available,reserved,planted,inactive',
+            'description' => 'required|string',
+            'water_source' => 'required|string',
+            'owner_id' => 'required|exists:users,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            // توليد اسم عشوائي للصورة مع الامتداد
+            $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
+
+            // حفظ الصورة في مجلد public باستخدام Storage
+            Storage::disk('public')->put($imageName, file_get_contents($request->image));
+
+            // تخزين اسم الصورة فقط في قاعدة البيانات
+            $validated['image'] = $imageName;
+        }
+
+        $land = Land::create($validated);
+
+        return $this->getData('Land created successfully.', 'land', $land);
+    }
+
+    public function getAllLands(){
+        $lands = Land::all();
+        if(!$lands){
+            return $this->getError(401,'Not found any lands');
+        }
+        else{
+            return $this->getData('Getting lands successfully','lands',$lands);
+
+        }
+    }
+
+    public function getLnadById($id){
+        $land = Land::find($id);
+        if(!$land){
+            return $this->getError(401,'Not found any lands');
+        }
+        else{
+            return $this->getData('Getting land successfully','land',$land);
+
+        }
+    }
 
 }

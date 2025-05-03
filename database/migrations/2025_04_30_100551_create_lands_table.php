@@ -17,9 +17,9 @@ return new class extends Migration
             $table->decimal('latitude', 10, 7);    // لتحديد إحداثيات دقيقة
             $table->decimal('longitude', 10, 7);
             $table->decimal('total_area', 10, 2);  // يمكن تغيير الحجم والدقة حسب الحاجة
-            $table->enum('land_type', ['agricultural', 'residential', 'commercial', 'industrial']);
+            $table->enum('land_type', ['private', 'government', 'unused']);
             $table->string('soil_type');
-            $table->enum('status', ['available', 'sold', 'reserved', 'unavailable']);
+            $table->enum('status', ['available' , 'reserved', 'planted' , 'inactive']);
             $table->text('description');
             $table->string('water_source');
             $table->foreignId('owner_id')->constrained()->onDelete('cascade');

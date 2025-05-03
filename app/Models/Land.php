@@ -20,6 +20,7 @@ class Land extends Model
         'status',
         'description',
         'water_source',
+        'image',
     ];
 
     public function owner()

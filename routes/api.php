@@ -12,8 +12,10 @@ Route::prefix('owner')->group(function () {
     Route::middleware(['auth:sanctum','role:land_owner'])->group(function () {
         Route::post('/logout', [OwnerController::class, 'logout']);
         Route::get('/profile', [OwnerController::class, 'getProfile']);
-
         Route::post('/addInfo', [OwnerController::class, 'completeProfile']);
+        Route::post('/addLand', [OwnerController::class, 'addLand']);
+        Route::get('/getLnadById/{id}', [OwnerController::class, 'getLnadById']);
+        Route::get('/getAllLands', [OwnerController::class, 'getAllLands']);
 
     });
 });
