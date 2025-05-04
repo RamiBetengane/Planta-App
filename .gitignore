@@ -21,3 +21,6 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# استثناء مجلد الصور حتى يتم رفعه على Git
+!/storage/app/public/images
