@@ -21,7 +21,7 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'Low',
                 'growth_min_months' => 1,
                 'growth_max_months' => 3,
-                'image' => 'images/basil.jpg',  // إضافة الصورة
+                'image' => 'images/basil.jfif',  // إضافة الصورة
             ],
             [
                 'scientific_name' => 'Solanum lycopersicum',
@@ -34,7 +34,7 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'Low',
                 'growth_min_months' => 2,
                 'growth_max_months' => 4,
-                'image' => 'images/tomato.jpg',  // إضافة الصورة
+                'image' => 'images/tomato.jfif',  // إضافة الصورة
             ],
             [
                 'scientific_name' => 'Daucus carota',
@@ -47,7 +47,7 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'None',
                 'growth_min_months' => 2,
                 'growth_max_months' => 3,
-                'image' => 'images/carrot.jpg',  // إضافة الصورة
+                'image' => 'images/carrot.jfif',  // إضافة الصورة
             ],
             [
                 'scientific_name' => 'Mentha',
@@ -60,7 +60,7 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'None',
                 'growth_min_months' => 1,
                 'growth_max_months' => 2,
-                'image' => 'images/mint.jpg',  // إضافة الصورة
+                'image' => 'images/mint.jfif',  // إضافة الصورة
             ],
             [
                 'scientific_name' => 'Allium cepa',
@@ -73,7 +73,7 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'Low',
                 'growth_min_months' => 3,
                 'growth_max_months' => 5,
-                'image' => 'images/onion.jpg',  // إضافة الصورة
+                'image' => 'images/onion.jfif',  // إضافة الصورة
             ],
             [
                 'scientific_name' => 'Lactuca sativa',
@@ -86,7 +86,7 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'None',
                 'growth_min_months' => 1,
                 'growth_max_months' => 2,
-                'image' => 'images/lettuce.jpg',  // إضافة الصورة
+                'image' => 'images/lettuce.jfif',  // إضافة الصورة
             ],
             [
                 'scientific_name' => 'Zea mays',
@@ -99,7 +99,7 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'Low',
                 'growth_min_months' => 3,
                 'growth_max_months' => 5,
-                'image' => 'images/corn.jpg',  // إضافة الصورة
+                'image' => 'images/corn.jfif',  // إضافة الصورة
             ],
             [
                 'scientific_name' => 'Pisum sativum',
@@ -112,7 +112,7 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'None',
                 'growth_min_months' => 2,
                 'growth_max_months' => 3,
-                'image' => 'images/pea.jpg',  // إضافة الصورة
+                'image' => 'images/pea.jfif',  // إضافة الصورة
             ],
             [
                 'scientific_name' => 'Capsicum annuum',
@@ -125,7 +125,7 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'Low',
                 'growth_min_months' => 2,
                 'growth_max_months' => 4,
-                'image' => 'images/bell_pepper.jpg',  // إضافة الصورة
+                'image' => 'images/bell_pepper.jfif',  // إضافة الصورة
             ],
             [
                 'scientific_name' => 'Spinacia oleracea',
@@ -138,7 +138,7 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'None',
                 'growth_min_months' => 1,
                 'growth_max_months' => 2,
-                'image' => 'images/spinach.jpg',  // إضافة الصورة
+                'image' => 'images/spinach.jfif',  // إضافة الصورة
             ],
         ];
 
