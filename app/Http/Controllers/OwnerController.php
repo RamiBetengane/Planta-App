@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Land;
+use App\Models\Plant;
 use App\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -208,6 +209,26 @@ class OwnerController extends Controller
         }
         else{
             return $this->getData('Getting land successfully','land',$land);
+
+        }
+    }
+    public function getAllPlants(){
+        $plants = Plant::all();
+        if(!$plants){
+            return $this->getError(401,'Not found any plants');
+        }
+        else{
+            return $this->getData('Getting plants successfully','lands',$plants);
+
+        }
+    }
+    public function getPlantById($id){
+        $palnt = Plant::find($id);
+        if(!$palnt){
+            return $this->getError(401,'Not found any plant');
+        }
+        else{
+            return $this->getData('Getting plant successfully','plant',$palnt);
 
         }
     }

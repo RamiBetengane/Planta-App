@@ -16,6 +16,9 @@ Route::prefix('owner')->group(function () {
         Route::post('/addLand', [OwnerController::class, 'addLand']);
         Route::get('/getLnadById/{id}', [OwnerController::class, 'getLnadById']);
         Route::get('/getAllLands', [OwnerController::class, 'getAllLands']);
+        Route::get('/getAllPlants', [OwnerController::class, 'getAllPlants']);
+        Route::get('/getPlantById/{id}', [OwnerController::class, 'getPlantById']);
+
 
     });
 });
