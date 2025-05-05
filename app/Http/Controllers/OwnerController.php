@@ -212,25 +212,27 @@ class OwnerController extends Controller
 
         }
     }
-    public function getAllPlants(){
+    public function getAllPlants()
+    {
         $plants = Plant::all();
-        if(!$plants){
-            return $this->getError(401,'Not found any plants');
-        }
-        else{
-            return $this->getData('Getting plants successfully','lands',$plants);
 
+        if ($plants->isEmpty()) {
+            return $this->getError(401, 'No plants found.');
         }
-    }
-    public function getPlantById($id){
-        $palnt = Plant::find($id);
-        if(!$palnt){
-            return $this->getError(401,'Not found any plant');
-        }
-        else{
-            return $this->getData('Getting plant successfully','plant',$palnt);
 
-        }
+        return $this->getData('Plants retrieved successfully', 'plants', $plants);
     }
+
+    public function getPlantById($id)
+    {
+        $plant = Plant::find($id);
+
+        if (!$plant) {
+            return $this->getError(401, 'Plant not found.');
+        }
+
+        return $this->getData('Plant retrieved successfully', 'plant', $plant);
+    }
+
 
 }
