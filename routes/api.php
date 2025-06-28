@@ -42,5 +42,6 @@ Route::prefix('workshop')->group(function () {
         Route::post('/logout', [WorkshopController::class, 'logout']);
         Route::get('/profile', [WorkshopController::class, 'profile']);
         Route::put('/update', [WorkshopController::class, 'updatePersonalInfo']);
+
     });
 });
