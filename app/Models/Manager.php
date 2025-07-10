@@ -17,4 +17,10 @@ class Manager extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function tenders()
+    {
+        return $this->hasMany(Tender::class);
+    }
+
 }

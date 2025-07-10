@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('growth_min_months');
             $table->integer('growth_max_months');
             $table->string('image')->nullable();  // إضافة الحقل للصورة
-
+            $table->float('required_area');
             $table->timestamps();
         });
     }

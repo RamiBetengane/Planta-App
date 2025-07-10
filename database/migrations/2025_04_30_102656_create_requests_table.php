@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->text('notes');
             $table->decimal('area', 10, 2);  // دقة 2 بعد الفاصلة
+            $table->text('rejection_reason')->nullable();
             $table->timestamps();
         });
     }

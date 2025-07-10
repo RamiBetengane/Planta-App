@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('plant_id')->constrained()->onDelete('cascade');
             $table->foreignId('request_id')->constrained()->onDelete('cascade');
             $table->integer('quantity');
+//            $table->text('rejection_reason')->nullable();
+
             $table->timestamps();
         });
     }

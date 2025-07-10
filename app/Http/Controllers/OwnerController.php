@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Land;
 use App\Models\Plant;
 use App\ResponseTrait;
+use HttpRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -233,6 +235,84 @@ class OwnerController extends Controller
 
         return $this->getData('Plant retrieved successfully', 'plant', $plant);
     }
+    public function addRequest(Request $request)
+    {
+        $validated = $request->validate([
+            'owner_id' => 'required|exists:users,id',
+            'land_id' => 'required|exists:lands,id',
+            'notes' => 'nullable|string',
+            'plants' => 'required|array|min:1',
+            'plants.*.plant_id' => 'required|exists:plants,id',
+            'plants.*.quantity' => 'required|integer|min:1',
+        ]);
 
+        // جلب الأرض والتحقق من ملكيتها
+        $land = Land::where('id', $validated['land_id'])
+            ->where('owner_id', $validated['owner_id'])
+            ->first();
+
+        if (!$land) {
+            return response()->json(['message' => 'الأرض غير موجودة أو لا تتبع لهذا المستخدم'], 404);
+        }
+
+        // حساب المساحة المطلوبة لكل نبات وجمعها
+        $totalRequestedArea = 0;
+        $plantData = [];
+
+        foreach ($validated['plants'] as $plantInput) {
+            $plant = Plant::find($plantInput['plant_id']);
+            $quantity = $plantInput['quantity'];
+            $areaForThisPlant = $quantity * $plant->required_area;
+
+            $totalRequestedArea += $areaForThisPlant;
+            $plantData[$plant->id] = ['quantity' => $quantity];
+        }
+
+        // التحقق من مساحة الأرض
+        if ($totalRequestedArea > $land->total_area) {
+            return response()->json([
+                'message' => 'المساحة المطلوبة تتجاوز مساحة الأرض المتوفرة',
+                'required_area' => $totalRequestedArea,
+                'available_area' => $land->total_area
+            ], 422);
+        }
+
+        // تخزين الطلب وربط النباتات
+        DB::beginTransaction();
+        try {
+            $newRequest = \App\Models\Request::create([
+                'land_id' => $land->id,
+                'notes' => $validated['notes'] ?? null,
+                'area' => $totalRequestedArea,
+                'status' => 'pending'
+            ]);
+
+            $newRequest->plants()->attach($plantData);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'created request successfully',
+                'data' => $newRequest->load('plants')
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'فشل في إنشاء الطلب',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getAllRequests()
+    {
+        $requests = \App\Models\Request::with(['plants', 'land'])->get();
+
+        return response()->json([
+            'message' => 'قائمة الطلبات',
+            'data' => $requests
+        ]);
+    }
 
 }

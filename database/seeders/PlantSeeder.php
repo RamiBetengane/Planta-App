@@ -21,7 +21,8 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'Low',
                 'growth_min_months' => 1,
                 'growth_max_months' => 3,
-                'image' => 'images/basil.jfif',  // إضافة الصورة
+                'required_area' => 0.2,
+                'image' => 'images/basil.jfif',
             ],
             [
                 'scientific_name' => 'Solanum lycopersicum',
@@ -34,7 +35,8 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'Low',
                 'growth_min_months' => 2,
                 'growth_max_months' => 4,
-                'image' => 'images/tomato.jfif',  // إضافة الصورة
+                'required_area' => 1.5,
+                'image' => 'images/tomato.jfif',
             ],
             [
                 'scientific_name' => 'Daucus carota',
@@ -47,7 +49,8 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'None',
                 'growth_min_months' => 2,
                 'growth_max_months' => 3,
-                'image' => 'images/carrot.jfif',  // إضافة الصورة
+                'required_area' => 0.3,
+                'image' => 'images/carrot.jfif',
             ],
             [
                 'scientific_name' => 'Mentha',
@@ -60,7 +63,8 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'None',
                 'growth_min_months' => 1,
                 'growth_max_months' => 2,
-                'image' => 'images/mint.jfif',  // إضافة الصورة
+                'required_area' => 0.5,
+                'image' => 'images/mint.jfif',
             ],
             [
                 'scientific_name' => 'Allium cepa',
@@ -73,7 +77,8 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'Low',
                 'growth_min_months' => 3,
                 'growth_max_months' => 5,
-                'image' => 'images/onion.jfif',  // إضافة الصورة
+                'required_area' => 0.4,
+                'image' => 'images/onion.jfif',
             ],
             [
                 'scientific_name' => 'Lactuca sativa',
@@ -86,7 +91,8 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'None',
                 'growth_min_months' => 1,
                 'growth_max_months' => 2,
-                'image' => 'images/lettuce.jfif',  // إضافة الصورة
+                'required_area' => 0.25,
+                'image' => 'images/lettuce.jfif',
             ],
             [
                 'scientific_name' => 'Zea mays',
@@ -99,7 +105,8 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'Low',
                 'growth_min_months' => 3,
                 'growth_max_months' => 5,
-                'image' => 'images/corn.jfif',  // إضافة الصورة
+                'required_area' => 2.5,
+                'image' => 'images/corn.jfif',
             ],
             [
                 'scientific_name' => 'Pisum sativum',
@@ -112,7 +119,8 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'None',
                 'growth_min_months' => 2,
                 'growth_max_months' => 3,
-                'image' => 'images/pea.jfif',  // إضافة الصورة
+                'required_area' => 0.8,
+                'image' => 'images/pea.jfif',
             ],
             [
                 'scientific_name' => 'Capsicum annuum',
@@ -125,7 +133,8 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'Low',
                 'growth_min_months' => 2,
                 'growth_max_months' => 4,
-                'image' => 'images/bell_pepper.jfif',  // إضافة الصورة
+                'required_area' => 1.2,
+                'image' => 'images/bell_pepper.jfif',
             ],
             [
                 'scientific_name' => 'Spinacia oleracea',
@@ -138,9 +147,11 @@ class PlantSeeder extends Seeder
                 'cancer_risk_impact' => 'None',
                 'growth_min_months' => 1,
                 'growth_max_months' => 2,
-                'image' => 'images/spinach.jfif',  // إضافة الصورة
+                'required_area' => 0.3,
+                'image' => 'images/spinach.jfif',
             ],
         ];
+
 
         foreach ($plants as $plant) {
             Plant::create($plant);
