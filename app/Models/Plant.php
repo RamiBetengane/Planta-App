@@ -20,6 +20,7 @@ class Plant extends Model
         'cancer_risk_impact',
         'growth_min_months',
         'growth_max_months',
+        'required_area',
     ];
 
 
