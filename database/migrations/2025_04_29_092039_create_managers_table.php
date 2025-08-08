@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('managers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->unique();
-            $table->string('department', 50)->nullable(); // department 50 حرف ومسموح فارغ
-            $table->string('position', 50); // position 50 حرف ولازم يكون موجود
+            $table->string('department', 50)->nullable();
+            $table->string('position', 50);
             $table->timestamps();
         });
     }

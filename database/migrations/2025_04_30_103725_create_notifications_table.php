@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('message');
-            $table->boolean('read_status')->default(false); // الحقل الذي يشير إلى حالة القراءة
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // الربط مع جدول users
+            $table->boolean('read_status')->default(false);
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

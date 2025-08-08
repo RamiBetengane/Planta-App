@@ -11,15 +11,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
-use App\Models\Doner; // إذا كان لديك موديل خاص بالمتبرع
+use App\Models\Doner;
 
 class DonerController extends Controller
 {
     use ResponseTrait;
 
-    /**
-     * تسجيل المتبرع.
-     */
+
     public function register(Request $request)
     {
         $request->validate([
@@ -33,7 +31,6 @@ class DonerController extends Controller
         ]);
         $image= str::random(32) . "." . $request->image->getClientOriginalExtension();
 
-        // إنشاء مستخدم جديد (متبرع)
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
@@ -46,22 +43,17 @@ class DonerController extends Controller
 
         ]);
 
-        // إنشاء سجل خاص بالمتبرع
         Doner::create([
             'user_id' => $user->id,
-            // ضع هنا الحقول الخاصة بالمتبرع إذا كانت موجودة
         ]);
 
-        // إنشاء توكن
         $token = $user->createToken('donor-token')->plainTextToken;
         Storage::disk('public')->put($image,file_get_contents($request->image));
 
         return $this->getData('Donor registered successfully', 'Donor', $user);
     }
 
-    /**
-     * تسجيل دخول المتبرع.
-     */
+
     public function login(Request $request)
     {
         $request->validate([
@@ -89,9 +81,7 @@ class DonerController extends Controller
         ]);
     }
 
-    /**
-     * تسجيل خروج المتبرع.
-     */
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
@@ -99,12 +89,9 @@ class DonerController extends Controller
         return $this->getSuccess('Logged out successfully.');
     }
 
-    /**
-     * عرض بيانات الملف الشخصي للمتبرع.
-     */
+
     public function profile()
     {
-        // جلب البيانات للمستخدم المتصل
         $user = Auth::user();
         $data = response()->json([
             'username' => $user->username,
@@ -118,25 +105,20 @@ class DonerController extends Controller
         return $this->getData('Getting profile successfully', 'Donor', $data);
     }
 
-    /**
-     * تحديث المعلومات الشخصية للمتبرع.
-     */
+
     public function updatePersonalInfo(Request $request)
     {
-        // التحقق من وجود المستخدم المتصل
         $user = Auth::user();
 
-        // التحقق من الحقول المدخلة
         $validated = $request->validate([
             'email' => 'required|email',
             'phone_number' => 'required|string|max:20',
             'address' => 'nullable|string|max:255',
         ]);
 
-        // تحديث البيانات
         $user->email = $validated['email'];
         $user->phone_number = $validated['phone_number'];
-        $user->address = $validated['address'] ?? $user->address; // إذا لم يتم إدخال عنوان، يبقى كما هو
+        $user->address = $validated['address'] ?? $user->address;
         $user->save();
 
         return $this->getData('Personal information updated successfully', 'Donor', $user);

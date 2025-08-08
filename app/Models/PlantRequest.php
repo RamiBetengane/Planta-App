@@ -9,7 +9,7 @@ class PlantRequest extends Model
 {
     use HasFactory;
 
-    protected $table = 'requests'; // نحدد اسم الجدول يدوياً
+    protected $table = 'requests';
 
     protected $fillable = [
         'land_id',
@@ -19,7 +19,6 @@ class PlantRequest extends Model
         'rejection_reason',
     ];
 
-    // علاقات (اختياري):
     public function land()
     {
         return $this->belongsTo(Land::class);

@@ -19,9 +19,7 @@ class ManagerController extends Controller
 {
     use ResponseTrait;
 
-    /**
-     * Manager login using email and password.
-     */
+
     public function login(Request $request)
     {
         $request->validate([
@@ -49,9 +47,7 @@ class ManagerController extends Controller
         ]);
     }
 
-    /**
-     * Manager logout.
-     */
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
@@ -59,9 +55,7 @@ class ManagerController extends Controller
         return $this->getSuccess('Logged out successfully.');
     }
 
-    /**
-     * Get manager profile.
-     */
+
     public function profile()
     {
         $user = Auth::user();
@@ -79,10 +73,6 @@ class ManagerController extends Controller
         return $this->getData('Profile fetched successfully.', 'Manager', $data);
     }
 
-    /**
-     * Update manager personal information.
-     */
-
 
 
     public function updatePersonalInfo(Request $request)
@@ -97,25 +87,22 @@ class ManagerController extends Controller
 
         $user = Auth::user();
 
-        // رفع الصورة إن وُجدت
         if ($request->hasFile('image')) {
             $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
             Storage::disk('public')->put($imageName, file_get_contents($request->image));
             $user->image = $imageName;
         }
 
-        // تحديث بيانات المستخدم (users)
         $user->phone_number = $request->phone_number;
         $user->address = $request->address;
         $user->save();
 
-        // تحديث أو إنشاء بيانات المدير (managers)
         $manager = Manager::firstOrNew(['user_id' => $user->id]);
         $manager->department = $request->department;
         $manager->position = $request->position;
         $manager->save();
 
-        $user->load('manager'); // جلب علاقة المدير مع المستخدم محدثة
+        $user->load('manager');
 
         return $this->getData('Profile completed successfully', 'Manager', $user);
     }
@@ -243,7 +230,6 @@ class ManagerController extends Controller
     }
 
 
-// دالة المساعدة لرد الخطأ
     public function getError($status, $msg)
     {
         return response()->json([
@@ -252,7 +238,6 @@ class ManagerController extends Controller
         ], $status);
     }
 
-// دالة رد النجاح
     public function getData($message, $key, $value)
     {
         return response()->json([

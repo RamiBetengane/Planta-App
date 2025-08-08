@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('land_id')->constrained('lands')->onDelete('cascade');  // ربط الطلب بالأرض
+            $table->foreignId('land_id')->constrained('lands')->onDelete('cascade');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->text('notes');
-            $table->decimal('area', 10, 2);  // دقة 2 بعد الفاصلة
+            $table->decimal('area', 10, 2);
             $table->text('rejection_reason')->nullable();
             $table->timestamps();
         });

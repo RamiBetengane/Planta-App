@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tenders', function (Blueprint $table) {
-            $table->id(); // tender_id
+            $table->id();
             $table->foreignId('plant_request_id')
                 ->constrained('plant_request')
-                ->unique() // One-to-One
+                ->unique()
                 ->onDelete('cascade');
 
             $table->foreignId('manager_id')
                 ->constrained('managers')
-                ->onDelete('cascade'); // Many-to-One
+                ->onDelete('cascade');
 
             $table->dateTime('creation_date');
             $table->dateTime('open_date');

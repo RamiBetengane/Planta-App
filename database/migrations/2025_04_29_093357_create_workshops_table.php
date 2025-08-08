@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('workshops', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // user_id مربوط بجدول users
-            $table->integer('years_of_experience')->nullable(); // ممكن يكون فاضي
-            $table->decimal('rating', 3, 2)->nullable(); // مثل 4.50 أو 3.75
-            $table->string('specialization', 100)->nullable(); // تخصص الورشة، مسموح يكون فاضي
-            $table->string('license_number', 50); // رقم الرخصة، إجباري
-            $table->string('workshop_name', 100); // اسم الورشة، إجباري
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->integer('years_of_experience')->nullable();
+            $table->decimal('rating', 3, 2)->nullable();
+            $table->string('specialization', 100)->nullable();
+            $table->string('license_number', 50);
+            $table->string('workshop_name', 100);
             $table->timestamps();
         });
     }

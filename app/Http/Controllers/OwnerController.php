@@ -55,36 +55,62 @@ class OwnerController extends Controller
     return $this->getData('Owner registered successfully', 'User', $user);
 }
 
+//
+//    public function login(Request $request)
+//{
+//    $request->validate([
+//        'username' => 'required|string',
+//        'password' => 'required|string',
+//    ]);
+//
+//    $user = User::where('username', $request->username)
+//        ->where('user_type', 'land_owner')
+//        ->first();
+//
+//    if (!$user || !Hash::check($request->password, $user->password)) {
+//        throw ValidationException::withMessages([
+//            'credentials' => ['Invalid username or password.'],
+//        ]);
+//    }
+//
+//    $token = $user->createToken('owner-token')->plainTextToken;
+//
+//    return response()->json([
+//        'status'=>200,
+//        'message' => 'Owner logged in successfully',
+//        'user' => $user,
+//        'token' => $token,
+//    ]);
+////        return $this->getData('Owner logged in successfully','Owner',$user);
+//
+//}
 
     public function login(Request $request)
-{
-    $request->validate([
-        'username' => 'required|string',
-        'password' => 'required|string',
-    ]);
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-    $user = User::where('username', $request->username)
-        ->where('user_type', 'land_owner')
-        ->first();
+        $user = User::where('email', $request->email)
+            ->where('user_type', 'land_owner')
+            ->first();
 
-    if (!$user || !Hash::check($request->password, $user->password)) {
-        throw ValidationException::withMessages([
-            'credentials' => ['Invalid username or password.'],
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'credentials' => ['Invalid email or password.'],
+            ]);
+        }
+
+        $token = $user->createToken('owner-token')->plainTextToken;
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Owner logged in successfully',
+            'user' => $user,
+            'token' => $token,
         ]);
     }
-
-    $token = $user->createToken('owner-token')->plainTextToken;
-
-    return response()->json([
-        'status'=>200,
-        'message' => 'Owner logged in successfully',
-        'user' => $user,
-        'token' => $token,
-    ]);
-//        return $this->getData('Owner logged in successfully','Owner',$user);
-
-}
-
 
     public function completeProfile(Request $request)
     {
@@ -96,21 +122,18 @@ class OwnerController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
         ]);
 
-        $user = Auth::user(); // أو JWT::user()
+        $user = Auth::user();
 
-        // رفع الصورة إن وُجدت بنفس طريقة register
         if ($request->hasFile('image')) {
             $imageName = Str::random(32) . "." . $request->image->getClientOriginalExtension();
             Storage::disk('public')->put($imageName, file_get_contents($request->image));
             $user->image = $imageName;
         }
 
-        // تحديث بيانات user
         $user->phone_number = $request->phone_number;
         $user->address = $request->address;
         $user->save();
 
-        // تحديث بيانات owner
         $owner = Owner::where('user_id', $user->id)->first();
         if ($owner) {
             $owner->estate_number = $request->estate_number;
@@ -131,11 +154,10 @@ class OwnerController extends Controller
 
     public function getProfile(Request $request)
     {
-        $user = Auth::user(); // أو JWT::user()
+        $user = Auth::user();
 
         $user->load('owner');
 
-        // دمج بيانات owner مع user
         $merged = collect($user)->merge([
             'owner_id' => $user->owner->id ?? null,
             'id_number' => $user->owner->id_number ?? null,
@@ -169,22 +191,19 @@ class OwnerController extends Controller
             'longitude' => 'required|numeric',
             'total_area' => 'required|numeric',
             'land_type' => 'required|in:private,government,unused',
-            'soil_type' => 'required|string',
+            'soil_type' => 'required|in:clay,sandy,silty,peaty,chalky,loamy,rocky',
             'status' => 'required|in:available,reserved,planted,inactive',
             'description' => 'required|string',
-            'water_source' => 'required|string',
+            'water_source' => 'required|string', //00
             'owner_id' => 'required|exists:users,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
-            // توليد اسم عشوائي للصورة مع الامتداد
             $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
 
-            // حفظ الصورة في مجلد public باستخدام Storage
             Storage::disk('public')->put($imageName, file_get_contents($request->image));
 
-            // تخزين اسم الصورة فقط في قاعدة البيانات
             $validated['image'] = $imageName;
         }
 
@@ -246,7 +265,6 @@ class OwnerController extends Controller
             'plants.*.quantity' => 'required|integer|min:1',
         ]);
 
-        // جلب الأرض والتحقق من ملكيتها
         $land = Land::where('id', $validated['land_id'])
             ->where('owner_id', $validated['owner_id'])
             ->first();
@@ -255,7 +273,6 @@ class OwnerController extends Controller
             return response()->json(['message' => 'الأرض غير موجودة أو لا تتبع لهذا المستخدم'], 404);
         }
 
-        // حساب المساحة المطلوبة لكل نبات وجمعها
         $totalRequestedArea = 0;
         $plantData = [];
 
@@ -268,7 +285,6 @@ class OwnerController extends Controller
             $plantData[$plant->id] = ['quantity' => $quantity];
         }
 
-        // التحقق من مساحة الأرض
         if ($totalRequestedArea > $land->total_area) {
             return response()->json([
                 'message' => 'المساحة المطلوبة تتجاوز مساحة الأرض المتوفرة',
@@ -277,7 +293,6 @@ class OwnerController extends Controller
             ], 422);
         }
 
-        // تخزين الطلب وربط النباتات
         DB::beginTransaction();
         try {
             $newRequest = \App\Models\Request::create([
@@ -310,9 +325,37 @@ class OwnerController extends Controller
         $requests = \App\Models\Request::with(['plants', 'land'])->get();
 
         return response()->json([
-            'message' => 'قائمة الطلبات',
+            'message' => 'Requests List',
             'data' => $requests
         ]);
     }
+
+
+
+
+
+
+
+
+
+    public function getPlanetsForSpecificLand($id)
+    {
+        $land = Land::find($id);
+
+        if (!$land) {
+            return response()->json(['message' => 'Land not found'], 404);
+        }
+
+        $soilType = $land->soil_type; // نوع التربة من جدول الأراضي
+
+        // جلب النباتات التي تتطابق مع نوع التربة للأرض
+        $plants = Plant::where('soil_type', $soilType)->take(20)->get();
+
+        return response()->json([
+            'land' => $land,
+            'plants' => $plants,
+        ]);
+    }
+
 
 }

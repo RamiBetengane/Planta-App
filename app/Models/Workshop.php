@@ -15,7 +15,6 @@ class Workshop extends Model
         'workshop_name',
     ];
 
-    // العلاقة مع ال User
     public function user()
     {
         return $this->belongsTo(User::class);

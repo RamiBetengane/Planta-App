@@ -13,7 +13,6 @@ class Doner extends Model
 
     ];
 
-    // العلاقة مع User
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -26,18 +26,17 @@ class WorkshopController extends Controller
             'password' => 'required|string|min:6|confirmed',
             'phone_number' => 'required|string|max:20',
             'address' => 'nullable|string',
-            'license_number' => 'required|string|max:50', // إضافة رقم الرخصة
-            'workshop_name' => 'required|string|max:100',  // إضافة اسم الورشة
-            'years_of_experience' => 'required|nullable|integer', // تحقق من عدد سنوات الخبرة (يمكن أن يكون فارغًا)
-            'rating' => 'required|nullable|numeric|between:0,5',    // تحقق من التقييم (بين 0 و 5)
-            'specialization' => 'required|nullable|string|max:100', // تحقق من التخصص (يمكن أن يكون فارغًا)
+            'license_number' => 'required|string|max:50',
+            'workshop_name' => 'required|string|max:100',
+            'years_of_experience' => 'required|nullable|integer',
+            'rating' => 'required|nullable|numeric|between:0,5',
+            'specialization' => 'required|nullable|string|max:100',
             'image'=>'required|image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048',
         ]);
         $image= str::random(32) . "." . $request->image->getClientOriginalExtension();
 
 
 
-        // إنشاء مستخدم جديد
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
@@ -49,17 +48,15 @@ class WorkshopController extends Controller
             'user_type' => 'workshop',
         ]);
 
-        // إنشاء سجل خاص بالورشة
         Workshop::create([
             'user_id' => $user->id,
-            'years_of_experience' => $request->years_of_experience, // إذا كان موجود في الطلب
-            'rating' => $request->rating, // إذا كان موجود في الطلب
-            'specialization' => $request->specialization, // إذا كان موجود في الطلب
+            'years_of_experience' => $request->years_of_experience,
+            'rating' => $request->rating,
+            'specialization' => $request->specialization,
             'license_number' => $request->license_number,
             'workshop_name' => $request->workshop_name,
         ]);
 
-        // إنشاء توكن
         $token = $user->createToken('workshop-token')->plainTextToken;
         Storage::disk('public')->put($image,file_get_contents($request->image));
 
@@ -100,16 +97,12 @@ class WorkshopController extends Controller
         return $this->getSuccess('Logged out successfully.');
     }
 
-    /**
-     * عرض بيانات الملف الشخصي للورشة.
-     */
+
     public function profile()
     {
-        // جلب البيانات للمستخدم المتصل (الورشة)
         $user = Auth::user();
 
-        // جلب بيانات الورشة باستخدام العلاقة مع جدول workshops
-        // assuming the relationship is defined in the User model
+
         $data = response()->json([
             'username' => $user->username,
             'email' => $user->email,
@@ -123,9 +116,7 @@ class WorkshopController extends Controller
         return $this->getData('Getting workshop profile successfully', 'Workshop', $data);
     }
 
-    /**
-     * تحديث المعلومات الشخصية للورشة.
-     */
+
     public function updatePersonalInfo(Request $request)
     {
         $user = Auth::user();
@@ -137,12 +128,10 @@ class WorkshopController extends Controller
             'workshop_name' => 'required|string|max:100',
         ]);
 
-        // تحديث بيانات الورشة
         $user->phone_number = $validated['phone_number'];
         $user->address = $validated['address'] ?? $user->address;
         $user->save();
 
-        // تحديث بيانات الورشة المرتبطة
         $workshop = $user->workshop;
         $workshop->license_number = $validated['license_number'];
         $workshop->workshop_name = $validated['workshop_name'];

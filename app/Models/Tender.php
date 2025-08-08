@@ -19,7 +19,6 @@ class Tender extends Model
         'technical_requirements',
     ];
 
-    // العلاقات
     public function manager()
     {
         return $this->belongsTo(Manager::class);

@@ -13,7 +13,6 @@ class Request extends Model
         'area',
     ];
 
-    // علاقة BelongsTo مع جدول Land
     public function land()
     {
         return $this->belongsTo(Land::class);

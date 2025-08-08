@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('doners', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // يربط مع users.id
-            $table->string('tax_id', 30)->nullable(); // tax_id 30 حرف وممكن فارغ
-            $table->enum('donor_type', ['individual', 'organization']); // donor_type enum لازم موجود
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('tax_id', 30)->nullable();
+            $table->enum('donor_type', ['individual', 'organization']);
             $table->timestamps();
         });
     }

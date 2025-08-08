@@ -21,7 +21,7 @@ return new class extends Migration
             $table->dateTime('registration_date');
             $table->text('image')->nullable();
             $table->enum('user_type', ['land_owner', 'manager', 'workshop', 'donor']);
-            $table->timestamps(); // اختياري (يضيف created_at و updated_at)
+            $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

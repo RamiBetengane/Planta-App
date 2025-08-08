@@ -18,12 +18,14 @@ return new class extends Migration
             $table->text('description');
             $table->text('water_requirements');
             $table->text('sun_requirements');
-            $table->text('suitable_soil_types');
+          //  $table->text('suitable_soil_types');
+            $table->string('soil_type');  // نوع التربة لكل نبات
+
             $table->text('co2_absorption');
             $table->text('cancer_risk_impact');
             $table->integer('growth_min_months');
             $table->integer('growth_max_months');
-            $table->string('image')->nullable();  // إضافة الحقل للصورة
+            $table->string('image')->nullable();
             $table->float('required_area');
             $table->timestamps();
         });

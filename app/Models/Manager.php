@@ -12,7 +12,6 @@ class Manager extends Model
         'position',
     ];
 
-    // العلاقة مع ال User
     public function user()
     {
         return $this->belongsTo(User::class);

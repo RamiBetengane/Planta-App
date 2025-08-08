@@ -13,11 +13,11 @@ class Notification extends Model
         'title',
         'message',
         'read_status',
-        'user_id', // التأكد من إضافة user_id في الـ fillable
+        'user_id',
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class); // علاقة من نوع belongsTo مع جدول users
+        return $this->belongsTo(User::class);
     }
 }

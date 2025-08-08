@@ -20,19 +20,15 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, $role)
     {
-        // تحقق إذا كان المستخدم مسجلاً دخول
         if (Auth::check()) {
-            // تحقق من الدور الخاص بالمستخدم
             $user = Auth::user();
 
-            // إذا كان الدور غير مطابق، يمكن إعادة رد خطأ
             if ($user->user_type !== $role) {
 
              //   return response()->json(['message' => 'Access denied. You do not have the required role.'], 403);
                 return $this->getError(403,'Access denied. You do not have the required role.');
             }
 
-            // إذا كان الدور مطابق، استمر في الطلب
             return $next($request);
         }
 
