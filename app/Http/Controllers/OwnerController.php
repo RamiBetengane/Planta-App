@@ -197,6 +197,8 @@ class OwnerController extends Controller
             'water_source' => 'required|string', //00
             'owner_id' => 'required|exists:users,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'id_number' => 'required|nullable|integer',
+            'estate_number' => 'required|nullable|integer',
         ]);
 
         if ($request->hasFile('image')) {
@@ -254,6 +256,7 @@ class OwnerController extends Controller
 
         return $this->getData('Plant retrieved successfully', 'plant', $plant);
     }
+
     public function addRequest(Request $request)
     {
         $validated = $request->validate([

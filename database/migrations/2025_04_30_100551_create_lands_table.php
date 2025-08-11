@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string('water_source');
             $table->foreignId('owner_id')->constrained()->onDelete('cascade');
             $table->string('image')->nullable();
+            $table->integer('id_number')->nullable();
+            $table->integer('estate_number')->nullable();
             $table->timestamps();
         });
     }

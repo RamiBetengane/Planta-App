@@ -22,6 +22,8 @@ class Land extends Model
         'water_source',
         'image',
         'required_area',
+        'estate_number',
+        'id_number'
     ];
 
     public function owner()
