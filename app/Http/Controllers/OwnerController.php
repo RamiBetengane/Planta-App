@@ -117,8 +117,8 @@ class OwnerController extends Controller
         $request->validate([
             'phone_number' => 'required|string|max:20',
             'address' => 'required|string|max:255',
-            'id_number' => 'nullable|string|max:255',
-            'estate_number' => 'nullable|string|max:255',
+            'national_number' => 'nullable|string|max:255',
+         //   'estate_number' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
         ]);
 
@@ -136,17 +136,14 @@ class OwnerController extends Controller
 
         $owner = Owner::where('user_id', $user->id)->first();
         if ($owner) {
-            $owner->estate_number = $request->estate_number;
-            $owner->id_number = $request->id_number;
+         //   $owner->estate_number = $request->estate_number;
+            $owner->national_number = $request->national_number;
             $owner->save();
         }
 
         $user->load('owner');
 
-//        return response()->json([
-//            'message' => 'Profile updated successfully',
-//            'user' => $user
-//        ]);
+
         return $this->getData('Profile updated successfully','user',$user);
     }
 
@@ -197,7 +194,7 @@ class OwnerController extends Controller
             'water_source' => 'required|string', //00
             'owner_id' => 'required|exists:users,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'id_number' => 'required|nullable|integer',
+       //     'id_number' => 'required|nullable|integer',
             'estate_number' => 'required|nullable|integer',
         ]);
 

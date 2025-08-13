@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('owners', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->unique();
-            $table->integer('id_number')->nullable();
-            $table->integer('estate_number')->nullable();
+            $table->integer('national_number')->nullable();
+        //    $table->integer('estate_number')->nullable();
             $table->timestamps();
         });
     }

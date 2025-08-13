@@ -9,7 +9,7 @@ class Owner extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id','estate_number','id_number'];
+    protected $fillable = ['user_id','estate_number','national_number'];
 
     public function user()
     {
