@@ -196,6 +196,8 @@ class OwnerController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
        //     'id_number' => 'required|nullable|integer',
             'estate_number' => 'required|nullable|integer',
+            'title' => 'required|string',
+
         ]);
 
         if ($request->hasFile('image')) {

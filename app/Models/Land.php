@@ -23,7 +23,8 @@ class Land extends Model
         'image',
         'required_area',
         'estate_number',
-        'id_number'
+        'id_number',
+        'title'
     ];
 
     public function owner()

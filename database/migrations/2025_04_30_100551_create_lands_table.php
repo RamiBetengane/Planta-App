@@ -26,6 +26,8 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->integer('id_number')->nullable();
             $table->integer('estate_number')->nullable();
+            $table->string('title');
+
             $table->timestamps();
         });
     }
