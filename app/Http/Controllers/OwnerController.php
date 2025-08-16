@@ -157,8 +157,8 @@ class OwnerController extends Controller
 
         $merged = collect($user)->merge([
             'owner_id' => $user->owner->id ?? null,
-            'id_number' => $user->owner->id_number ?? null,
-            'estate_number' => $user->owner->estate_number ?? null,
+            'national_number' => $user->owner->national_number ?? null,
+          //  'estate_number' => $user->owner->estate_number ?? null,
             'owner_created_at' => $user->owner->created_at ?? null,
             'owner_updated_at' => $user->owner->updated_at ?? null,
         ])->except(['owner']); // نحذف المفتاح "owner" الأساسي
