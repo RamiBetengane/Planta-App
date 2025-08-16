@@ -27,10 +27,10 @@ class OwnerController extends Controller
         'username' => 'required|string|max:50|unique:users,username',
         'email' => 'required|string|email|max:100|unique:users,email',
         'password' => 'required|string|min:6|confirmed',
-        'image'=>'required|image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048',
+    //    'image'=>'required|image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048',
 
     ]);
-    $image= str::random(32) . "." . $request->image->getClientOriginalExtension();
+  //  $image= str::random(32) . "." . $request->image->getClientOriginalExtension();
 
 
     $user = User::create([
@@ -38,7 +38,7 @@ class OwnerController extends Controller
         'email' => $request->email,
         'password' => Hash::make($request->password),
         'registration_date' => now(),
-        'image' => $image,
+       // 'image' => $image,
         'user_type' => 'land_owner',
     ]);
 
@@ -50,7 +50,7 @@ class OwnerController extends Controller
     ]);
 
     $token = $user->createToken('owner-token')->plainTextToken;
-    Storage::disk('public')->put($image,file_get_contents($request->image));
+ //   Storage::disk('public')->put($image,file_get_contents($request->image));
 
     return $this->getData('Owner registered successfully', 'User', $user);
 }
@@ -163,7 +163,7 @@ class OwnerController extends Controller
             'owner_updated_at' => $user->owner->updated_at ?? null,
         ])->except(['owner']); // نحذف المفتاح "owner" الأساسي
 
-        return $this->getData('Profile retrieved successfully', 'owner', $merged);
+        return $this->getData('Profile retrieved successfully', 'user', $merged);
     }
 
 
