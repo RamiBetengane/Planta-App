@@ -128,10 +128,6 @@ class ManagerController extends Controller
 
         $plantingRequest->save();
 
-//        return response()->json([
-//            'message' => 'Request reviewed successfully.',
-//            'data' => $plantingRequest
-//        ]);
         return $this->getData('Request reviewed successfully.', 'data', $plantingRequest);
 
     }

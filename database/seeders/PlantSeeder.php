@@ -22,7 +22,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 36,
                 'growth_max_months' => 60,
                 'required_area' => 6.0,
-                'image' => 'images/olive.jpg',
+                'image' => 'images/olive.jfif',
             ],
             [
                 'scientific_name' => 'Malus domestica',
@@ -36,7 +36,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 24,
                 'growth_max_months' => 36,
                 'required_area' => 5.0,
-                'image' => 'images/apple.jpg',
+                'image' => 'images/apple.jfif',
             ],
             [
                 'scientific_name' => 'Punica granatum',
@@ -50,7 +50,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 18,
                 'growth_max_months' => 30,
                 'required_area' => 4.0,
-                'image' => 'images/pomegranate.jpg',
+                'image' => 'images/pomegranate.jfif',
             ],
             [
                 'scientific_name' => 'Ficus carica',
@@ -64,7 +64,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 24,
                 'growth_max_months' => 36,
                 'required_area' => 5.0,
-                'image' => 'images/fig.jpg',
+                'image' => 'images/fig.jfif',
             ],
             [
                 'scientific_name' => 'Prunus armeniaca',
@@ -78,7 +78,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 24,
                 'growth_max_months' => 36,
                 'required_area' => 4.5,
-                'image' => 'images/apricot.jpg',
+                'image' => 'images/apricot.jfij',
             ],
             [
                 'scientific_name' => 'Prunus avium',
@@ -92,7 +92,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 24,
                 'growth_max_months' => 36,
                 'required_area' => 4.0,
-                'image' => 'images/cherry.jpg',
+                'image' => 'images/cherry.jfif',
             ],
             [
                 'scientific_name' => 'Prunus domestica',
@@ -106,7 +106,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 24,
                 'growth_max_months' => 36,
                 'required_area' => 4.0,
-                'image' => 'images/plum.jpg',
+                'image' => 'images/plum.jfif',
             ],
             [
                 'scientific_name' => 'Juglans regia',
@@ -120,7 +120,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 36,
                 'growth_max_months' => 60,
                 'required_area' => 7.0,
-                'image' => 'images/walnut.jpg',
+                'image' => 'images/walnut.jfif',
             ],
             [
                 'scientific_name' => 'Prunus dulcis',
@@ -134,7 +134,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 24,
                 'growth_max_months' => 36,
                 'required_area' => 5.0,
-                'image' => 'images/almond.jpg',
+                'image' => 'images/almond.jfif',
             ],
             [
                 'scientific_name' => 'Citrus sinensis',
@@ -148,7 +148,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 24,
                 'growth_max_months' => 36,
                 'required_area' => 6.0,
-                'image' => 'images/orange.jpg',
+                'image' => 'images/orange.jfif',
             ],
             [
                 'scientific_name' => 'Citrus limon',
@@ -162,7 +162,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 24,
                 'growth_max_months' => 36,
                 'required_area' => 4.5,
-                'image' => 'images/lemon.jpg',
+                'image' => 'images/lemon.jfif',
             ],
             [
                 'scientific_name' => 'Vitis vinifera',
@@ -176,7 +176,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 18,
                 'growth_max_months' => 30,
                 'required_area' => 2.0,
-                'image' => 'images/grape.jpg',
+                'image' => 'images/grape.jfif',
             ],
             [
                 'scientific_name' => 'Cedrus libani',
@@ -190,7 +190,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 60,
                 'growth_max_months' => 120,
                 'required_area' => 10.0,
-                'image' => 'images/cedar.jpg',
+                'image' => 'images/cedar.jfif',
             ],
             [
                 'scientific_name' => 'Citrus reticulata',
@@ -204,7 +204,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 24,
                 'growth_max_months' => 36,
                 'required_area' => 5.0,
-                'image' => 'images/mandarin.jpg',
+                'image' => 'images/mandarin.jfif',
             ],
             [
                 'scientific_name' => 'Pyrus communis',
@@ -218,7 +218,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 24,
                 'growth_max_months' => 36,
                 'required_area' => 5.0,
-                'image' => 'images/pear.jpg',
+                'image' => 'images/pear.jfif',
             ],
         ];
 

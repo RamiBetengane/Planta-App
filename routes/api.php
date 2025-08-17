@@ -23,6 +23,8 @@ Route::prefix('owner')->group(function () {
 
         Route::post('/addRequest', [OwnerController::class, 'addRequest']);
         Route::get('/getAllRequests', [OwnerController::class, 'getAllRequests']);
+        Route::get('/getRequestById/{id}', [OwnerController::class, 'getRequestById']);
+
     });
 });
 

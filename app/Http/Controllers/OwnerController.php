@@ -335,6 +335,21 @@ class OwnerController extends Controller
 
 
 
+    public function getRequestById($id)
+    {
+        $request = \App\Models\Request::with(['plants', 'land'])->find($id);
+
+        if (!$request) {
+            return response()->json([
+                'message' => 'Request not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Request Details',
+            'data' => $request
+        ]);
+    }
 
 
 
