@@ -20,10 +20,16 @@ class PlantRequest extends Model
         'rejection_reason',
     ];
 
+//
+//    public function plant()
+//    {
+//        return $this->belongsTo(Plant::class, 'plant_id');
+//    }
 
+    // PlantRequest.php
     public function plant()
     {
-        return $this->belongsTo(Plant::class, 'plant_id');
+        return $this->belongsTo(Plant::class, 'plant_id', 'id');
     }
 
     public function request()

@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('license_number', 50)->nullable();
             $table->text('image')->nullable();
 
+            $table->text('rejection_reason')->nullable();
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+
             $table->timestamps();
         });
     }

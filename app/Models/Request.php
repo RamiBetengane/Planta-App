@@ -23,6 +23,23 @@ class Request extends Model
         return $this->belongsToMany(Plant::class, 'plant_request')->withPivot('quantity');
     }
 
+// 1
+    public function tender()
+    {
+        return $this->hasOne(Tender::class);
+    }
 
+
+    // 2
+//    public function plantRequests()
+//    {
+//        return $this->hasMany(PlantRequest::class);
+//    }
+// 3
+// Request.php
+    public function plant_requests()
+    {
+        return $this->hasMany(PlantRequest::class, 'request_id', 'id');
+    }
 
 }

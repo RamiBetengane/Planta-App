@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('tenders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('plant_request_id')
-                ->constrained('plant_request')
+
+            // ربط One-to-One مع جدول requests
+            $table->foreignId('request_id')
+                ->constrained('requests')
                 ->unique()
                 ->onDelete('cascade');
 
@@ -27,9 +29,11 @@ return new class extends Migration
             $table->dateTime('close_date');
             $table->enum('status', ['open', 'closed', 'awarded']);
             $table->text('technical_requirements')->nullable();
+            $table->text('tender_title')->nullable();
 
             $table->timestamps();
         });
+
     }
 
     /**

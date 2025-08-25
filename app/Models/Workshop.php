@@ -13,6 +13,8 @@ class Workshop extends Model
         'specialization',
         'license_number',
         'workshop_name',
+        'status',
+        'rejection_reason',
     ];
 
     public function user()

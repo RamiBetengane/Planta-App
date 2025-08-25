@@ -17,6 +17,8 @@ class Tender extends Model
         'close_date',
         'status',
         'technical_requirements',
+        'tender_title',
+        'request_id',
     ];
 
     public function manager()
@@ -30,5 +32,9 @@ class Tender extends Model
     }
 
     //
+    public function request()
+    {
+        return $this->belongsTo(Request::class);
+    }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Manager;
 use App\Models\Tender;
+use App\Models\Workshop;
 use HttpRequest;
 use Illuminate\Support\Facades\Storage;
 
@@ -175,112 +176,86 @@ class ManagerController extends Controller
     }
 
 
-
-
-//    public function createTender(Request $request)
-//    {
-//        $validated = $request->validate([
-//            'plant_request_id' => 'required|exists:plant_request,id|unique:tenders,plant_request_id',
-//            'manager_id' => 'required|exists:managers,id',
-//            'creation_date' => 'required|date',
-//            'open_date' => 'required|date|after_or_equal:creation_date',
-//            'close_date' => 'required|date|after:open_date',
-//            'status' => 'required|in:open,closed,awarded',
-//            'technical_requirements' => 'nullable|string',
-//        ]);
-//
-//        $tender = Tender::create($validated);
-//
-//        return $this->getData('Tender created successfully.', 'tender', $tender);
-//
-//    }
-
 /*
+
     public function createTender(Request $request)
     {
-        $data = $request->validate([
-            'plant_request_id' => 'required|exists:plant_request,id',
+        $validated = $request->validate([
+            'request_id' => 'required|exists:requests,id|unique:tenders,request_id',
             'manager_id' => 'required|exists:managers,id',
             'creation_date' => 'required|date',
             'open_date' => 'required|date',
             'close_date' => 'required|date',
-            'status' => 'required|string',
+            'status' => 'required|in:open,closed,awarded',
             'technical_requirements' => 'nullable|string',
+            'tender_title' => 'nullable|string',
         ]);
 
-        // 1. إنشاء الـ Tender
-        $tender = Tender::create($data);
+        $tender = Tender::create($validated);
 
-        // 2. جلب الـ PlantRequest المرتبط مع الـ request + plant + land
-        $plantRequest = PlantRequest::with(['request.land', 'plant'])
-            ->find($data['plant_request_id']);
 
-        // 3. تحضير response بشكل مرتب
-        $response = [
-            'tender' => $tender,
-            'plant_request' => [
-                'id' => $plantRequest->id,
-                'quantity' => $plantRequest->quantity,
-                'status' => $plantRequest->status,
-                'notes' => $plantRequest->notes,
-                'plant' => $plantRequest->plant, // بيانات النبات
+        // تحميل البيانات المرتبطة (PlantRequests + Plant + Request + Land)
+        $tender->load([
+            'request.land',
+            'request.plantRequests.plant'
+        ]);
+
+        return response()->json([
+            'message' => 'Tender created successfully',
+            'tender_detail' => $tender,
+            'plant_requests' => $tender->request->plantRequests
+        ]);
+    }
+
+*/
+
+    public function createTender(Request $request)
+    {
+        // Validation
+        $validated = $request->validate([
+            'request_id' => 'required|exists:requests,id|unique:tenders,request_id',
+            'manager_id' => 'required|exists:managers,id',
+            'creation_date' => 'required|date',
+            'open_date' => 'required|date',
+            'close_date' => 'required|date',
+            'status' => 'required|in:open,closed,awarded',
+            'technical_requirements' => 'nullable|string',
+            'tender_title' => 'nullable|string',
+        ]);
+
+        // Create Tender
+        $tender = Tender::create($validated);
+
+        // Load related data (Request + Land + PlantRequests + Plant)
+        $tender->load([
+            'request.land',
+            'request.plantRequests.plant'
+        ]);
+
+        // Return clean response
+        return response()->json([
+            'message' => 'Tender created successfully',
+            'tender_detail' => [
+                'id' => $tender->id,
+                'tender_title' => $tender->tender_title,
+                'request_id' => $tender->request_id,
+                'manager_id' => $tender->manager_id,
+                'creation_date' => $tender->creation_date,
+                'open_date' => $tender->open_date,
+                'close_date' => $tender->close_date,
+                'status' => $tender->status,
+                'technical_requirements' => $tender->technical_requirements,
                 'request' => [
-                    'id' => $plantRequest->request->id,
-                    'notes' => $plantRequest->request->notes,
-                    'area' => $plantRequest->request->area,
-                    'land' => $plantRequest->request->land // بيانات الأرض
+                    'id' => $tender->request->id,
+                    'status' => $tender->request->status,
+                    'notes' => $tender->request->notes,
+                    'area' => $tender->request->area,
+                    'rejection_reason' => $tender->request->rejection_reason,
+                    'land' => $tender->request->land,
+                    'plant_requests' => $tender->request->plantRequests
                 ]
             ]
-        ];
-
-        return response()->json([
-            'message' => 'Tender created successfully',
-            'data' => $response
-        ], 201);
-    }
-*/
-    public function createTender(Request $request)
-    {
-        $data = $request->validate([
-            'line_number' => 'required|integer|exists:plant_request,line_number',
-            'manager_id' => 'required|exists:managers,id',
-            'creation_date' => 'required|date',
-            'open_date' => 'required|date',
-            'close_date' => 'required|date',
-            'status' => 'required|string',
-            'technical_requirements' => 'nullable|string',
         ]);
-
-        // 1. جلب كل plant_request المرتبطة بنفس line_number
-        $plantRequests = PlantRequest::with(['plant', 'request.land'])
-            ->where('line_number', $data['line_number'])
-            ->get();
-
-        if($plantRequests->isEmpty()) {
-            return response()->json(['message' => 'No plant_requests found for this line_number'], 404);
-        }
-
-        // 2. إنشاء Tender لكل plant_request (يمكن أيضًا ربطه بأول plant_request فقط إذا أردت)
-        $tender = Tender::create([
-            'plant_request_id' => $plantRequests->first()->id, // نختار أول record
-            'manager_id' => $data['manager_id'],
-            'creation_date' => $data['creation_date'],
-            'open_date' => $data['open_date'],
-            'close_date' => $data['close_date'],
-            'status' => $data['status'],
-            'technical_requirements' => $data['technical_requirements'] ?? null,
-        ]);
-
-        // 3. تحضير response مرتب يشمل كل plant_requests بنفس line_number
-        $response = [
-            'tender' => $tender,
-            'plant_requests' => $plantRequests
-        ];
-
-        return response()->json([
-            'message' => 'Tender created successfully',
-            'data' => $response
-        ], 201);
     }
 
 
@@ -413,5 +388,102 @@ class ManagerController extends Controller
             'requests' => $requests
         ]);
     }
+
+
+    public function getAllWorkshops()
+    {
+        // استرجاع كل الورش مع بيانات المستخدم المرتبطة
+        $workshops = \App\Models\Workshop::with('user')->get();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'All workshops retrieved successfully',
+            'workshop' => $workshops
+        ]);
+    }
+    public function getWorkshopById($id)
+    {
+        // جلب الورشة مع بيانات المستخدم المرتبط
+        $workshop = \App\Models\Workshop::with('user')->find($id);
+
+        if (!$workshop) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Workshop not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Workshop retrieved successfully',
+            'workshop' => $workshop
+        ]);
+    }
+// AdminController.php
+    public function evaluateWorkshop(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:approved,rejected',
+            'rejection_reason' => 'nullable|string|max:255',
+        ]);
+
+        // 1. جلب الورشة
+        $workshop = Workshop::findOrFail($id);
+
+        // 2. تحديث الحالة
+        $workshop->status = $request->status;
+
+        if ($request->status === 'rejected') {
+            $workshop->rejection_reason = $request->rejection_reason ?? 'Rejected by admin';
+        } else {
+            $workshop->rejection_reason = null; // ما في سبب إذا Approved
+        }
+
+        $workshop->save();
+
+        // 3. إرجاع الرد
+        return response()->json([
+            'status' => 200,
+            'message' => "Workshop evaluation updated successfully",
+            'data' => $workshop->load('user'),
+        ]);
+    }
+
+    // استرجاع جميع الورش المقبولة
+    public function getAllWorkshopsApproved()
+    {
+        $workshops = Workshop::with('user')->where('status', 'approved')->get();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'All approved workshops retrieved successfully',
+            'data' => $workshops
+        ]);
+    }
+
+// استرجاع جميع الورش قيد الانتظار
+    public function getAllWorkshopsPending()
+    {
+        $workshops = Workshop::with('user')->where('status', 'pending')->get();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'All pending workshops retrieved successfully',
+            'data' => $workshops
+        ]);
+    }
+
+// استرجاع جميع الورش المرفوضة
+    public function getAllWorkshopsRejected()
+    {
+        $workshops = Workshop::with('user')->where('status', 'rejected')->get();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'All rejected workshops retrieved successfully',
+            'data' => $workshops
+        ]);
+    }
+
 
 }

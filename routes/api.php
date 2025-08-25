@@ -39,6 +39,11 @@ Route::prefix('donor')->group(function () {
     });
 });
 
+
+
+
+
+
 Route::prefix('workshop')->group(function () {
     Route::post('/register', [WorkshopController::class, 'register']);
     Route::post('/login', [WorkshopController::class, 'login']);
@@ -46,9 +51,24 @@ Route::prefix('workshop')->group(function () {
     Route::middleware(['auth:sanctum', 'role:workshop'])->group(function () {
         Route::post('/logout', [WorkshopController::class, 'logout']);
         Route::get('/profile', [WorkshopController::class, 'profile']);
-        Route::put('/update', [WorkshopController::class, 'updatePersonalInfo']);
+        Route::post('/completeWorkshopProfile', [WorkshopController::class, 'completeWorkshopProfile']);
+
+// tenders in workshop
+        Route::get('/getAllTenders', [WorkshopController::class, 'getAllTenders']);
+        Route::get('/getTenderById/{id}', [WorkshopController::class, 'getTenderById']);
+
+
     });
 });
+
+
+
+
+
+
+
+
+
 
 Route::prefix('manager')->group(function () {
     Route::post('/login', [ManagerController::class, 'login']);
@@ -74,7 +94,17 @@ Route::prefix('manager')->group(function () {
         Route::get('/getAllTenders', [ManagerController::class, 'getAllTenders']);
         Route::get('/getTenderById/{id}', [ManagerController::class, 'getTenderById']);
 
+// workshop in manager
+        Route::get('/getAllWorkshops', [ManagerController::class, 'getAllWorkshops']);
+        Route::get('/getWorkshopById/{id}', [ManagerController::class, 'getWorkshopById']);
 
+
+        // evaluated
+        Route::put('evaluateWorkshop/{id}', [ManagerController::class, 'evaluateWorkshop']);
+// Admin workshop routes
+        Route::get('/approved', [ManagerController::class, 'getAllWorkshopsApproved']);
+        Route::get('/pending', [ManagerController::class, 'getAllWorkshopsPending']);
+        Route::get('/rejected', [ManagerController::class, 'getAllWorkshopsRejected']);
 
     });
 });
