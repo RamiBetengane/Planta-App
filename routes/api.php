@@ -56,8 +56,18 @@ Route::prefix('manager')->group(function () {
     Route::middleware(['auth:sanctum', 'role:manager'])->group(function () {
         Route::post('/logout', [ManagerController::class, 'logout']);
         Route::get('/profile', [ManagerController::class, 'profile']);
+        Route::get('/getAllRequests', [OwnerController::class, 'getAllRequests']);
+
         Route::post('/update', [ManagerController::class, 'updatePersonalInfo']);
         Route::put('/requests/{id}/review', [ManagerController::class, 'reviewRequest']);
+        Route::get('/getRequestById/{id}', [ManagerController::class, 'getRequestById']);
+
+        Route::get('/getAllApprovedReq', [ManagerController::class, 'getAllApprovedReq']);
+        Route::get('/getAllRejectedReq', [ManagerController::class, 'getAllRejectedReq']);
+
+        Route::get('/getAllPendingReq', [ManagerController::class, 'getAllPendingReq']);
+
+
         Route::post('/createTender', [ManagerController::class, 'createTender']);
         Route::put('/update/{id}', [ManagerController::class, 'update']);
         Route::delete('/destroy/{id}', [ManagerController::class, 'destroy']);
@@ -65,7 +75,6 @@ Route::prefix('manager')->group(function () {
         Route::get('/getTenderById/{id}', [ManagerController::class, 'getTenderById']);
 
 
-        Route::get('/getAllRequests', [OwnerController::class, 'getAllRequests']);
 
     });
 });

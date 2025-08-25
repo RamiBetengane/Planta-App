@@ -28,4 +28,7 @@ class Tender extends Model
     {
         return $this->belongsTo(PlantRequest::class);
     }
+
+    //
+
 }

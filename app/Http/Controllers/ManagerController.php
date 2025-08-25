@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Manager;
 use App\Models\Tender;
+use HttpRequest;
 use Illuminate\Support\Facades\Storage;
 
 use App\Http\Controllers\Controller;
@@ -70,7 +71,7 @@ class ManagerController extends Controller
             'image' => $user->image,
         ]);
 
-        return $this->getData('Profile fetched successfully.', 'Manager', $data);
+        return $this->getData('Profile fetched successfully.', 'User', $data);
     }
 
 
@@ -104,11 +105,33 @@ class ManagerController extends Controller
 
         $user->load('manager');
 
-        return $this->getData('Profile completed successfully', 'Manager', $user);
+        return $this->getData('Profile completed successfully', 'user', $user);
     }
 
 
-
+//
+//    public function reviewRequest(Request $request, $id)
+//    {
+//        $request->validate([
+//            'status' => 'required|in:approved,rejected',
+//            'rejection_reason' => 'required_if:status,rejected|string|max:1000',
+//        ]);
+//
+//        $plantingRequest = PlantRequest::findOrFail($id);
+//
+//        $plantingRequest->status = $request->status;
+//
+//        if ($request->status === 'rejected') {
+//            $plantingRequest->rejection_reason = $request->rejection_reason;
+//        } else {
+//            $plantingRequest->rejection_reason = null;
+//        }
+//
+//        $plantingRequest->save();
+//
+//        return $this->getData('Request reviewed successfully.', 'data', $plantingRequest);
+//
+//    }
     public function reviewRequest(Request $request, $id)
     {
         $request->validate([
@@ -116,38 +139,150 @@ class ManagerController extends Controller
             'rejection_reason' => 'required_if:status,rejected|string|max:1000',
         ]);
 
-        $plantingRequest = PlantRequest::findOrFail($id);
+        $requestModel = \App\Models\Request::with('land')->findOrFail($id);
 
-        $plantingRequest->status = $request->status;
+        $requestModel->status = $request->status;
 
         if ($request->status === 'rejected') {
-            $plantingRequest->rejection_reason = $request->rejection_reason;
+            $requestModel->rejection_reason = $request->rejection_reason;
         } else {
-            $plantingRequest->rejection_reason = null;
+            $requestModel->rejection_reason = null;
         }
 
-        $plantingRequest->save();
+        $requestModel->save();
 
-        return $this->getData('Request reviewed successfully.', 'data', $plantingRequest);
-
+        // رجع الريكويست + بيانات الأرض
+        return $this->getData('Request reviewed successfully.', 'data', $requestModel->load('land'));
     }
+
+
+
+
+    public function getRequestById($id)
+    {
+        $requestModel = \App\Models\Request::with([
+            'land',
+            'plants' => function ($query) {
+                // هون خلينا كل الأعمدة من جدول plants
+                $query->withPivot('id', 'quantity', 'line_number', 'request_id', 'plant_id');
+            }
+        ])->findOrFail($id);
+
+        return response()->json([
+            'message' => 'Request details',
+            'request' => $requestModel
+        ]);
+    }
+
+
+
+
+//    public function createTender(Request $request)
+//    {
+//        $validated = $request->validate([
+//            'plant_request_id' => 'required|exists:plant_request,id|unique:tenders,plant_request_id',
+//            'manager_id' => 'required|exists:managers,id',
+//            'creation_date' => 'required|date',
+//            'open_date' => 'required|date|after_or_equal:creation_date',
+//            'close_date' => 'required|date|after:open_date',
+//            'status' => 'required|in:open,closed,awarded',
+//            'technical_requirements' => 'nullable|string',
+//        ]);
+//
+//        $tender = Tender::create($validated);
+//
+//        return $this->getData('Tender created successfully.', 'tender', $tender);
+//
+//    }
+
+/*
     public function createTender(Request $request)
     {
-        $validated = $request->validate([
-            'plant_request_id' => 'required|exists:plant_request,id|unique:tenders,plant_request_id',
+        $data = $request->validate([
+            'plant_request_id' => 'required|exists:plant_request,id',
             'manager_id' => 'required|exists:managers,id',
             'creation_date' => 'required|date',
-            'open_date' => 'required|date|after_or_equal:creation_date',
-            'close_date' => 'required|date|after:open_date',
-            'status' => 'required|in:open,closed,awarded',
+            'open_date' => 'required|date',
+            'close_date' => 'required|date',
+            'status' => 'required|string',
             'technical_requirements' => 'nullable|string',
         ]);
 
-        $tender = Tender::create($validated);
+        // 1. إنشاء الـ Tender
+        $tender = Tender::create($data);
 
-        return $this->getData('Tender created successfully.', 'tender', $tender);
+        // 2. جلب الـ PlantRequest المرتبط مع الـ request + plant + land
+        $plantRequest = PlantRequest::with(['request.land', 'plant'])
+            ->find($data['plant_request_id']);
 
+        // 3. تحضير response بشكل مرتب
+        $response = [
+            'tender' => $tender,
+            'plant_request' => [
+                'id' => $plantRequest->id,
+                'quantity' => $plantRequest->quantity,
+                'status' => $plantRequest->status,
+                'notes' => $plantRequest->notes,
+                'plant' => $plantRequest->plant, // بيانات النبات
+                'request' => [
+                    'id' => $plantRequest->request->id,
+                    'notes' => $plantRequest->request->notes,
+                    'area' => $plantRequest->request->area,
+                    'land' => $plantRequest->request->land // بيانات الأرض
+                ]
+            ]
+        ];
+
+        return response()->json([
+            'message' => 'Tender created successfully',
+            'data' => $response
+        ], 201);
     }
+*/
+    public function createTender(Request $request)
+    {
+        $data = $request->validate([
+            'line_number' => 'required|integer|exists:plant_request,line_number',
+            'manager_id' => 'required|exists:managers,id',
+            'creation_date' => 'required|date',
+            'open_date' => 'required|date',
+            'close_date' => 'required|date',
+            'status' => 'required|string',
+            'technical_requirements' => 'nullable|string',
+        ]);
+
+        // 1. جلب كل plant_request المرتبطة بنفس line_number
+        $plantRequests = PlantRequest::with(['plant', 'request.land'])
+            ->where('line_number', $data['line_number'])
+            ->get();
+
+        if($plantRequests->isEmpty()) {
+            return response()->json(['message' => 'No plant_requests found for this line_number'], 404);
+        }
+
+        // 2. إنشاء Tender لكل plant_request (يمكن أيضًا ربطه بأول plant_request فقط إذا أردت)
+        $tender = Tender::create([
+            'plant_request_id' => $plantRequests->first()->id, // نختار أول record
+            'manager_id' => $data['manager_id'],
+            'creation_date' => $data['creation_date'],
+            'open_date' => $data['open_date'],
+            'close_date' => $data['close_date'],
+            'status' => $data['status'],
+            'technical_requirements' => $data['technical_requirements'] ?? null,
+        ]);
+
+        // 3. تحضير response مرتب يشمل كل plant_requests بنفس line_number
+        $response = [
+            'tender' => $tender,
+            'plant_requests' => $plantRequests
+        ];
+
+        return response()->json([
+            'message' => 'Tender created successfully',
+            'data' => $response
+        ], 201);
+    }
+
 
     public function update(Request $request, $id)
     {
@@ -239,6 +374,43 @@ class ManagerController extends Controller
         return response()->json([
             'message' => $message,
             $key => $value
+        ]);
+    }
+
+
+    public function getAllApprovedReq()
+    {
+        $requests = \App\Models\Request::with(['land', 'plants']) // إذا عندك علاقات
+        ->where('status', 'approved')
+            ->get();
+
+        return response()->json([
+            'message' => 'Approved Requests List',
+            'requests' => $requests
+        ]);
+    }
+
+
+    public function getAllRejectedReq()
+    {
+        $requests = \App\Models\Request::with(['land', 'plants']) // إذا عندك علاقات
+        ->where('status', 'rejected')
+            ->get();
+
+        return response()->json([
+            'message' => 'Rejected Requests List',
+            'requests' => $requests
+        ]);
+    }
+    public function getAllPendingReq()
+    {
+        $requests = \App\Models\Request::with(['land', 'plants']) // إذا عندك علاقات
+        ->where('status', 'pending')
+            ->get();
+
+        return response()->json([
+            'message' => 'Pending Requests List',
+            'requests' => $requests
         ]);
     }
 

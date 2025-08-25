@@ -17,10 +17,12 @@ class Request extends Model
     {
         return $this->belongsTo(Land::class);
     }
+
     public function plants()
     {
         return $this->belongsToMany(Plant::class, 'plant_request')->withPivot('quantity');
     }
+
 
 
 }

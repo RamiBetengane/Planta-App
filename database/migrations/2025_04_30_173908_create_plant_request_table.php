@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('request_id')->constrained()->onDelete('cascade');
             $table->integer('quantity');
 //            $table->text('rejection_reason')->nullable();
+            $table->integer('line_number')->nullable(); // الرقم التزايدي لكل request
 
             $table->timestamps();
         });

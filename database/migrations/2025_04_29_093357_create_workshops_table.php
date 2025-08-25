@@ -17,8 +17,10 @@ return new class extends Migration
             $table->integer('years_of_experience')->nullable();
             $table->decimal('rating', 3, 2)->nullable();
             $table->string('specialization', 100)->nullable();
-            $table->string('license_number', 50);
-            $table->string('workshop_name', 100);
+            $table->string('workshop_name', 100)->nullable();
+            $table->string('license_number', 50)->nullable();
+            $table->text('image')->nullable();
+
             $table->timestamps();
         });
     }

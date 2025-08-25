@@ -30,4 +30,6 @@ class Plant extends Model
         return $this->belongsToMany(Request::class, 'plant_request')->withPivot('quantity');
     }
 
+
+
 }

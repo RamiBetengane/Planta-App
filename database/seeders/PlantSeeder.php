@@ -78,7 +78,7 @@ class PlantSeeder extends Seeder
                 'growth_min_months' => 24,
                 'growth_max_months' => 36,
                 'required_area' => 4.5,
-                'image' => 'images/apricot.jfij',
+                'image' => 'images/apricot.jfif',
             ],
             [
                 'scientific_name' => 'Prunus avium',

@@ -9,7 +9,8 @@ class PlantRequest extends Model
 {
     use HasFactory;
 
-    protected $table = 'requests';
+ //   protected $table = 'requests';
+    protected $table = 'plant_request';  // ✅ الجدول الوسيط الصحيح
 
     protected $fillable = [
         'land_id',
@@ -19,8 +20,16 @@ class PlantRequest extends Model
         'rejection_reason',
     ];
 
-    public function land()
+
+    public function plant()
     {
-        return $this->belongsTo(Land::class);
+        return $this->belongsTo(Plant::class, 'plant_id');
     }
+
+    public function request()
+    {
+        return $this->belongsTo(Request::class, 'request_id');
+    }
+
+
 }
