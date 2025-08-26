@@ -31,15 +31,15 @@ class Request extends Model
 
 
     // 2
-//    public function plantRequests()
-//    {
-//        return $this->hasMany(PlantRequest::class);
-//    }
+    public function plantRequests()
+    {
+        return $this->hasMany(PlantRequest::class,'request_id','id');
+    }
 // 3
 // Request.php
-    public function plant_requests()
-    {
-        return $this->hasMany(PlantRequest::class, 'request_id', 'id');
-    }
+//    public function plant_requests()
+//    {
+//        return $this->hasMany(PlantRequest::class, 'request_id', 'id');
+//    }
 
 }
