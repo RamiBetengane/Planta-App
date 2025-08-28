@@ -272,21 +272,44 @@ class ManagerController extends Controller
         }
     }
 
+//    public function getTenderById($id)
+//    {
+//        try {
+//            // جلب tender مع request وplants المرتبطة به
+//            $tender = Tender::with([
+//                'request.plants'  // كل tender له request واحد مع النباتات المرتبطة
+//            ])->findOrFail($id);
+//
+//            return $this->getData('Tender fetched successfully.', 'tender', $tender);
+//
+//        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+//            return $this->getError(404, 'Tender not found.');
+//        } catch (\Exception $e) {
+//            return $this->getError(500, 'Server error: ' . $e->getMessage());
+//        }
+//    }
+
+
     public function getTenderById($id)
     {
-        try {
-            // جلب tender مع request وplants المرتبطة به
-            $tender = Tender::with([
-                'request.plants'  // كل tender له request واحد مع النباتات المرتبطة
-            ])->findOrFail($id);
+        $tender = \App\Models\Tender::with([
+            'request',
+            'request.land',
+            'request.plant_requests.plant'
+        ])->find($id);
 
-            return $this->getData('Tender fetched successfully.', 'tender', $tender);
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->getError(404, 'Tender not found.');
-        } catch (\Exception $e) {
-            return $this->getError(500, 'Server error: ' . $e->getMessage());
+        if (!$tender) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Tender not found'
+            ]);
         }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Tender details retrieved successfully',
+            'tender' => $tender
+        ]);
     }
 
 
