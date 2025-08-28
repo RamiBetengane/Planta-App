@@ -454,4 +454,19 @@ class OwnerController extends Controller
     }
 
 
+
+    public function getUserRequests($userId)
+    {
+        $requests = \App\Models\Request::with(['plants', 'land'])
+            ->whereHas('land', function ($query) use ($userId) {
+                $query->where('owner_id', $userId);
+            })
+            ->get();
+
+        return response()->json([
+            'message' => 'Requests List for User ' . $userId,
+            'requests' => $requests
+        ]);
+    }
+
 }

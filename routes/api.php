@@ -25,6 +25,10 @@ Route::prefix('owner')->group(function () {
         Route::get('/getAllRequests', [OwnerController::class, 'getAllRequests']);
         Route::get('/getRequestById/{id}', [OwnerController::class, 'getRequestById']);
 
+        Route::get('/getUserRequests/{id}', [OwnerController::class, 'getUserRequests']);
+
+
+
     });
 });
 
