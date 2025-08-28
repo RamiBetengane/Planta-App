@@ -62,6 +62,12 @@ Route::prefix('workshop')->group(function () {
         Route::get('/getTenderById/{id}', [WorkshopController::class, 'getTenderById']);
 
 
+
+        //offers
+        Route::post('/createOffer', [WorkshopController::class, 'createOffer']);
+        Route::get('/getAllOffers', [WorkshopController::class, 'getAllOffers']);
+        Route::get('/getOfferById/{id}', [WorkshopController::class, 'getOfferById']);
+
     });
 });
 
@@ -93,8 +99,7 @@ Route::prefix('manager')->group(function () {
 
 
         Route::post('/createTender', [ManagerController::class, 'createTender']);
-        Route::put('/update/{id}', [ManagerController::class, 'update']);
-        Route::delete('/destroy/{id}', [ManagerController::class, 'destroy']);
+
         Route::get('/getAllTenders', [ManagerController::class, 'getAllTenders']);
         Route::get('/getTenderById/{id}', [ManagerController::class, 'getTenderById']);
 

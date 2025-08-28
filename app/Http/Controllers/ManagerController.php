@@ -258,60 +258,12 @@ class ManagerController extends Controller
         ]);
     }
 
-
-    public function update(Request $request, $id)
-    {
-        try {
-            $tender = Tender::findOrFail($id);
-
-            $validated = $request->validate([
-                'plant_request_id' => 'required|exists:plant_request,id|unique:tenders,plant_request_id,' . $id,
-                'manager_id' => 'required|exists:managers,id',
-                'creation_date' => 'required|date',
-                'open_date' => 'required|date|after_or_equal:creation_date',
-                'close_date' => 'required|date|after:open_date',
-                'status' => 'required|in:open,closed,awarded',
-                'technical_requirements' => 'nullable|string',
-            ]);
-
-            $tender->update($validated);
-
-            return $this->getData('Tender updated successfully.', 'tender', $tender);
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->getError(404, 'Tender not found.');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'status' => 422,
-                'message' => 'Validation error.',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return $this->getError(500, 'Server error: ' . $e->getMessage());
-        }
-    }
-
-
-    public function destroy($id)
-    {
-        try {
-            $tender = Tender::findOrFail($id);
-            $tender->delete();
-
-            return $this->getData('Tender deleted successfully.', 'tender', $tender);
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->getError(404, 'Tender not found.');
-        } catch (\Exception $e) {
-            return $this->getError(500, 'Server error: ' . $e->getMessage());
-        }
-    }
-
-
     public function getAllTenders()
     {
         try {
-            $tenders = Tender::with(['plantRequest', 'manager'])->get();
+            $tenders = Tender::with([
+                'request.plants'  // جلب الـ request المرتبط بكل tender مع النباتات المرتبطة
+            ])->get();
 
             return $this->getData('Tenders fetched successfully.', 'tenders', $tenders);
 
@@ -320,11 +272,13 @@ class ManagerController extends Controller
         }
     }
 
-
     public function getTenderById($id)
     {
         try {
-            $tender = Tender::with(['plantRequest', 'manager'])->findOrFail($id);
+            // جلب tender مع request وplants المرتبطة به
+            $tender = Tender::with([
+                'request.plants'  // كل tender له request واحد مع النباتات المرتبطة
+            ])->findOrFail($id);
 
             return $this->getData('Tender fetched successfully.', 'tender', $tender);
 

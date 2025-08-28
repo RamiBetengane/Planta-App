@@ -38,4 +38,13 @@ class PlantRequest extends Model
     }
 
 
+
+
+    //*
+    public function offerDetails()
+    {
+        return $this->hasMany(OfferDetail::class);
+    }
+
+
 }

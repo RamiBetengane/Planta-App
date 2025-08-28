@@ -21,4 +21,11 @@ class Workshop extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // 2cond
+    public function offers()
+    {
+        return $this->hasMany(Offer::class);
+    }
+
 }

@@ -37,4 +37,11 @@ class Tender extends Model
         return $this->belongsTo(Request::class);
     }
 
+    // 1st
+    public function offers()
+    {
+        return $this->hasMany(Offer::class);
+    }
+
+
 }

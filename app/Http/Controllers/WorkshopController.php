@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Offer;
+use App\Models\OfferDetail;
 use App\Models\Plant;
+use App\Models\PlantRequest;
 use App\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,54 +22,8 @@ class WorkshopController extends Controller
 {
     use ResponseTrait;
 
-//    public function register(Request $request)
-//    {
-//        $request->validate([
-//            'username' => 'required|string|max:50|unique:users,username',
-//            'email' => 'required|string|email|max:100|unique:users,email',
-//            'password' => 'required|string|min:6|confirmed',
-//            'phone_number' => 'required|string|max:20',
-//            'address' => 'nullable|string',
-//            'license_number' => 'required|string|max:50',
-//            'workshop_name' => 'required|string|max:100',
-//            'years_of_experience' => 'required|nullable|integer',
-//            'rating' => 'required|nullable|numeric|between:0,5',
-//            'specialization' => 'required|nullable|string|max:100',
-//            'image'=>'required|image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048',
-//        ]);
-//        $image= str::random(32) . "." . $request->image->getClientOriginalExtension();
-//
-//
-//
-//        $user = User::create([
-//            'username' => $request->username,
-//            'email' => $request->email,
-//            'password' => Hash::make($request->password),
-//            'phone_number' => $request->phone_number,
-//            'address' => $request->address,
-//            'registration_date' => now(),
-//            'image' => $image,
-//            'user_type' => 'workshop',
-//        ]);
-//
-//        Workshop::create([
-//            'user_id' => $user->id,
-//            'years_of_experience' => $request->years_of_experience,
-//            'rating' => $request->rating,
-//            'specialization' => $request->specialization,
-//            'license_number' => $request->license_number,
-//            'workshop_name' => $request->workshop_name,
-//        ]);
-//
-//        $token = $user->createToken('workshop-token')->plainTextToken;
-//        Storage::disk('public')->put($image,file_get_contents($request->image));
-//
-//        return $this->getData('Workshop registered successfully', 'Workshop', $user);
-//    }
-
     public function register(Request $request)
     {
-        // 1. التحقق من البيانات
         $request->validate([
             'username' => 'required|string|max:50|unique:users,username',
             'email' => 'required|string|email|max:100|unique:users,email',
@@ -73,7 +31,6 @@ class WorkshopController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
         ]);
 
-        // 2. إنشاء المستخدم بدون الصورة أولًا
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
@@ -82,7 +39,6 @@ class WorkshopController extends Controller
             'user_type' => 'workshop',
         ]);
 
-        // 3. حفظ صورة المستخدم إذا كانت موجودة
         if ($request->hasFile('image')) {
             $imageName = Str::random(32) . "." . $request->image->getClientOriginalExtension();
             Storage::disk('public')->put($imageName, file_get_contents($request->image));
@@ -90,7 +46,6 @@ class WorkshopController extends Controller
             $user->save();
         }
 
-        // 4. إنشاء الورشة المرتبطة بالمستخدم (القيم الأخرى null) مع وضع status = pending
         $workshop = Workshop::create([
             'user_id' => $user->id,
             'workshop_name' => null,
@@ -98,85 +53,45 @@ class WorkshopController extends Controller
             'years_of_experience' => null,
             'rating' => null,
             'specialization' => null,
-            'status' => 'pending', // تلقائيًا pending
+            'status' => 'pending',
             'rejection_reason' => null,
         ]);
 
-        // 5. إنشاء توكن للمصادقة
         $token = $user->createToken('workshop-token')->plainTextToken;
 
-        // 6. الرد
+
         return response()->json([
             'message' => 'Workshop registered successfully. Await admin approval.',
-            'user' => $user->load('workshop'), // نرجع بيانات الورشة مع المستخدم
+            'user' => $user->load('workshop'),
             'token' => $token
         ], 201);
     }
 
-    /*
+
     public function login(Request $request)
     {
-        // 1. التحقق من البيانات
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        // 2. البحث عن المستخدم مع التأكد أنه workshop
-        $user = User::where('email', $request->email)
-            ->where('user_type', 'workshop')
-            ->first();
-
-        // 3. التحقق من كلمة المرور
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'credentials' => ['Invalid email or password.'],
-            ]);
-        }
-
-        // 4. إنشاء توكن جديد للورشة
-        $token = $user->createToken('workshop-token')->plainTextToken;
-
-        // 5. الرد
-        return response()->json([
-            'status' => 200,
-            'message' => 'Workshop logged in successfully',
-            'user' => $user,
-            'token' => $token,
-        ]);
-    }
-
-    */
-
-    public function login(Request $request)
-    {
-        // 1. التحقق من البيانات
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        // 2. البحث عن المستخدم مع التأكد أنه workshop وجلب بيانات الورشة
         $user = User::with('workshop')
             ->where('email', $request->email)
             ->where('user_type', 'workshop')
             ->first();
 
-        // 3. التحقق من كلمة المرور
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'credentials' => ['Invalid email or password.'],
             ]);
         }
 
-        // 4. إنشاء توكن جديد للورشة
         $token = $user->createToken('workshop-token')->plainTextToken;
 
-        // 5. الرد
         return response()->json([
             'status' => 200,
             'message' => 'Workshop logged in successfully',
-            'user' => $user, // يحتوي على بيانات الـ user + الورشة عبر العلاقة
+            'user' => $user,
             'token' => $token,
         ]);
     }
@@ -210,9 +125,8 @@ class WorkshopController extends Controller
 
     public function completeWorkshopProfile(Request $request)
     {
-        $user = $request->user(); // المستخدم الحالي
+        $user = $request->user();
 
-        // 1. التحقق من البيانات
         $request->validate([
             'phone_number' => 'required|string|max:20',
             'address' => 'required|string|max:255',
@@ -225,7 +139,7 @@ class WorkshopController extends Controller
             'workshop_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // 2. تحديث بيانات المستخدم
+
         $user->phone_number = $request->phone_number;
         $user->address = $request->address;
 
@@ -237,7 +151,6 @@ class WorkshopController extends Controller
 
         $user->save();
 
-        // 3. تحديث بيانات الورشة المرتبطة بالمستخدم
         $workshop = $user->workshop;
 
         if (!$workshop) {
@@ -258,7 +171,6 @@ class WorkshopController extends Controller
 
         $workshop->save();
 
-        // 4. الرد بالبيانات الجديدة
         return response()->json([
             'status' => 200,
             'message' => 'Workshop profile updated successfully',
@@ -267,20 +179,16 @@ class WorkshopController extends Controller
     }
     public function getAllTenders()
     {
-        // استرجاع كل المناقصات مع البيانات المرتبطة
-        $tenders = \App\Models\Tender::with([
-
-        ])->get();
+        $tenders = \App\Models\Tender::all();
 
         return response()->json([
             'status' => 200,
             'message' => 'All tenders retrieved successfully',
-            'data' => $tenders
+            'tender' => $tenders
         ]);
     }
     public function getTenderById($id)
     {
-        // جلب المناقصة مع الـ Request المرتبط، الأرض، وطلبات النباتات مع بيانات النباتات
         $tender = \App\Models\Tender::with([
             'request',
             'request.land',
@@ -297,9 +205,128 @@ class WorkshopController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'Tender details retrieved successfully',
-            'data' => $tender
+            'tender' => $tender
         ]);
     }
 
 
+    public function createOffer(Request $request)
+    {
+        $validated = $request->validate([
+            'tender_id' => 'required|exists:tenders,id',
+            'workshop_id' => 'required|exists:workshops,id',
+            'estimated_completion' => 'required|integer|min:1',
+            'notes' => 'nullable|string',
+            'plants' => 'required|array|min:1',
+            'plants.*.plant_id' => 'required|exists:plants,id',
+            'plants.*.unit_price' => 'required|numeric|min:0',
+        ]);
+
+        return DB::transaction(function () use ($validated) {
+            $totalOfferAmount = 0;
+
+
+            $offer = Offer::create([
+                'tender_id' => $validated['tender_id'],
+                'workshop_id' => $validated['workshop_id'],
+                'estimation_completion' => $validated['estimated_completion'],
+                'status' => 'pending',
+                'notes' => $validated['notes'] ?? null,
+                'total_offer_amount' => 0,
+            ]);
+
+            $offerDetails = [];
+
+            foreach ($validated['plants'] as $plantData) {
+                $plantRequest = PlantRequest::where('request_id', $validated['tender_id'])
+                ->where('plant_id', $plantData['plant_id'])
+                    ->first();
+
+                if (!$plantRequest) {
+                    continue;
+                }
+
+                $quantity = $plantRequest->quantity;
+                $unitPrice = $plantData['unit_price'];
+                $totalPrice = $quantity * $unitPrice;
+
+                $totalOfferAmount += $totalPrice;
+
+                $detail = OfferDetail::create([
+                    'offer_id' => $offer->id,
+                    'plant_request_id' => $plantRequest->id,
+                    'plant_id' => $plantData['plant_id'],
+                    'unit_cost' => $unitPrice,
+                    'total_cost' => $totalPrice,
+                ]);
+
+                $offerDetails[] = $detail;
+            }
+
+            $offer->update([
+                'total_offer_amount' => $totalOfferAmount,
+            ]);
+
+            return response()->json([
+                'message' => 'Offer created successfully',
+                'offer' => $offer->load('offerDetails.plant'),
+                'total_offer_amount' => $totalOfferAmount,
+            ], 201);
+        });
+    }
+
+
+
+/*
+    public function getAllOffers()
+    {
+        $offers = Offer::with([
+            'workshop',
+            'tender',
+            'offerDetails.plantRequest.plant'
+        ])->get();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'All offers retrieved successfully',
+            'data' => $offers
+        ]);
+    }
+*/
+    public function getAllOffers()
+    {
+        // جلب كل البيانات من جدول offers فقط
+        $offers = \App\Models\Offer::with('offerDetails')->get();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'All offers retrieved successfully',
+            'offers' => $offers
+        ]);
+    }
+
+
+
+
+
+    public function getOfferById($id)
+    {
+        $offer = Offer::with([
+            'tender',
+            'offerDetails.plantRequest.plant'
+        ])->find($id);
+
+        if (!$offer) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Offer not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Offer retrieved successfully',
+            'offer' => $offer
+        ]);
+    }
 }
