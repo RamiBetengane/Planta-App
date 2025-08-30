@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Manager;
+use App\Models\Offer;
 use App\Models\Tender;
 use App\Models\Workshop;
 use HttpRequest;
@@ -462,5 +463,76 @@ class ManagerController extends Controller
         ]);
     }
 
+    public function getAllOffers()
+    {
+        // جلب البيانات من جدول offers مع تفاصيل العرض والورشة
+        $offers = \App\Models\Offer::with(['offerDetails', 'workshop'])->get();
 
+        return response()->json([
+            'status' => 200,
+            'message' => 'All offers retrieved successfully',
+            'offers' => $offers
+        ]);
+    }
+
+
+    public function getOfferById($id)
+    {
+        $offer = Offer::with([
+            'tender',
+            'offerDetails.plantRequest.plant',
+            'workshop' // جلب بيانات الورشة المرتبطة بالعرض
+        ])->find($id);
+
+        if (!$offer) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Offer not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Offer retrieved successfully',
+            'offer' => $offer
+        ]);
+    }
+
+
+
+
+    public function acceptOffer(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:approved,rejected'
+        ]);
+
+        // جلب العرض
+        $offer = Offer::find($id);
+
+        if (!$offer) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Offer not found'
+            ], 404);
+        }
+
+        // تحديث الحالة
+        $offer->status = $request->status;
+        $offer->save();
+
+        // جلب العرض مع كل العلاقات المطلوبة
+        $offer = Offer::with([
+            'workshop',
+            'tender',
+            'offerDetails.plantRequest.plant',
+            'offerDetails.plantRequest.request.land'
+        ])->find($id);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Offer status updated successfully',
+            'offer' => $offer
+        ]);
+    }
 }

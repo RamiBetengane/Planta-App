@@ -115,5 +115,11 @@ Route::prefix('manager')->group(function () {
         Route::get('/pending', [ManagerController::class, 'getAllWorkshopsPending']);
         Route::get('/rejected', [ManagerController::class, 'getAllWorkshopsRejected']);
 
+
+        //offers in mabager
+        Route::get('/getAllOffers', [ManagerController::class, 'getAllOffers']);
+        Route::get('/getOfferById/{id}', [ManagerController::class, 'getOfferById']);
+        Route::post('/acceptOffer/{id}', [ManagerController::class, 'acceptOffer']);
+
     });
 });
